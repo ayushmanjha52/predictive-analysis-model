@@ -1,0 +1,601 @@
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [8672]
+INFO:     Started server process [6736]
+INFO:     Waiting for application startup.
+INFO:     Started server process [16080]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Shutting down
+INFO:     Finished server process [16080]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6736]
+INFO:     Received SIGINT, exiting.
+INFO:     Received SIGBREAK, exiting.
+INFO:     Waiting for child process [6736]
+INFO:     Waiting for child process [16080]
+INFO:     Stopping parent process [8672]
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [6812]
+INFO:     Started server process [7360]
+INFO:     Started server process [7384]
+INFO:     Waiting for application startup.
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 78, in serve
+    await self._serve(sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 93, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 142, in startup
+    server = await loop.create_server(create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 1640, in create_server
+    server._start_serving()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 317, in _start_serving
+    sock.listen(self._backlog)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^
+OSError: [WinError 10022] An invalid argument was supplied
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\routing.py", line 645, in lifespan
+    await receive()
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-2:
+Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\multiprocessing\process.py", line 313, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\supervisors\multiprocess.py", line 77, in target
+    self.server.run(sockets)
+    ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 74, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 78, in serve
+    await self._serve(sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 93, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 142, in startup
+    server = await loop.create_server(create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 1640, in create_server
+    server._start_serving()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 317, in _start_serving
+    sock.listen(self._backlog)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^
+OSError: [WinError 10022] An invalid argument was supplied
+INFO:     Waiting for child process [7384]
+INFO:     Child process [7384] died
+INFO:     Started server process [6100]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7360]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6100]
+INFO:     Received SIGINT, exiting.
+INFO:     Terminated child process [7360]
+INFO:     Terminated child process [6100]
+INFO:     Waiting for child process [7360]
+INFO:     Waiting for child process [6100]
+INFO:     Stopping parent process [6812]
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [18180]
+INFO:     Started server process [8704]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [11600]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [11600]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8704]
+INFO:     Received SIGINT, exiting.
+INFO:     Terminated child process [8704]
+INFO:     Terminated child process [11600]
+INFO:     Waiting for child process [8704]
+INFO:     Waiting for child process [11600]
+INFO:     Stopping parent process [18180]
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [14756]
+INFO:     Started server process [5476]
+INFO:     Started server process [4580]
+INFO:     Waiting for application startup.
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 78, in serve
+    await self._serve(sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 93, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 142, in startup
+    server = await loop.create_server(create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 1640, in create_server
+    server._start_serving()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 317, in _start_serving
+    sock.listen(self._backlog)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^
+OSError: [WinError 10022] An invalid argument was supplied
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\routing.py", line 645, in lifespan
+    await receive()
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-2:
+Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\multiprocessing\process.py", line 313, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\supervisors\multiprocess.py", line 77, in target
+    self.server.run(sockets)
+    ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 74, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 78, in serve
+    await self._serve(sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 93, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 142, in startup
+    server = await loop.create_server(create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 1640, in create_server
+    server._start_serving()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 317, in _start_serving
+    sock.listen(self._backlog)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^
+OSError: [WinError 10022] An invalid argument was supplied
+INFO:     Waiting for child process [4580]
+INFO:     Child process [4580] died
+INFO:     Started server process [18680]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 2683, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 1266, in handle
+    await super().handle(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 731, in app
+    response = actual_response_class(content, **response_args)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\responses.py", line 192, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\responses.py", line 45, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\responses.py", line 195, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\json\encoder.py", line 261, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+INFO:     Shutting down
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [18680]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5476]
+INFO:     Received SIGINT, exiting.
+INFO:     Terminated child process [5476]
+INFO:     Terminated child process [18680]
+INFO:     Waiting for child process [5476]
+INFO:     Waiting for child process [18680]
+INFO:     Stopping parent process [14756]
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [13520]
+INFO:     Started server process [15756]
+INFO:     Started server process [21356]
+INFO:     Waiting for application startup.
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 78, in serve
+    await self._serve(sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 93, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 142, in startup
+    server = await loop.create_server(create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 1640, in create_server
+    server._start_serving()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 317, in _start_serving
+    sock.listen(self._backlog)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^
+OSError: [WinError 10022] An invalid argument was supplied
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\routing.py", line 645, in lifespan
+    await receive()
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-1:
+Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\multiprocessing\process.py", line 313, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\supervisors\multiprocess.py", line 77, in target
+    self.server.run(sockets)
+    ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 74, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 78, in serve
+    await self._serve(sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 93, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\server.py", line 142, in startup
+    server = await loop.create_server(create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 1640, in create_server
+    server._start_serving()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\asyncio\base_events.py", line 317, in _start_serving
+    sock.listen(self._backlog)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^
+OSError: [WinError 10022] An invalid argument was supplied
+INFO:     Waiting for child process [21356]
+INFO:     Child process [21356] died
+INFO:     Started server process [18072]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 2683, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 1266, in handle
+    await super().handle(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 731, in app
+    response = actual_response_class(content, **response_args)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\responses.py", line 192, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\responses.py", line 45, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\responses.py", line 195, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\json\encoder.py", line 261, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 2683, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 1266, in handle
+    await super().handle(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\fastapi\routing.py", line 731, in app
+    response = actual_response_class(content, **response_args)
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\responses.py", line 192, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\responses.py", line 45, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\venv\Lib\site-packages\starlette\responses.py", line 195, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Users\ayush\OneDrive\Desktop\python\Lib\json\encoder.py", line 261, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+INFO:     Shutting down
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15756]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [18072]
+INFO:     Received SIGINT, exiting.
+INFO:     Terminated child process [18072]
+INFO:     Terminated child process [15756]
+INFO:     Waiting for child process [18072]
+INFO:     Waiting for child process [15756]
+INFO:     Stopping parent process [13520]
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [17736]
+INFO:     Started server process [14864]
+INFO:     Waiting for application startup.
+INFO:     Started server process [7924]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Received SIGINT, exiting.
+INFO:     Terminated child process [7924]
+INFO:     Terminated child process [14864]
+INFO:     Waiting for child process [7924]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [14864]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7924]
+]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [17348]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+C:\Users\ayush\OneDrive\Attachments\Desktop\pdm2\app.py:258: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  log = pd.concat([log, pd.DataFrame([new_row])], ignore_index=True)

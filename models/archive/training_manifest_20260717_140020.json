@@ -1,0 +1,38 @@
+{
+  "trained_at": "2026-07-16T12:29:03.091269",
+  "winner_model": "catboost",
+  "n_features": 241,
+  "n_samples": 344,
+  "n_classes": 8,
+  "classes": [
+    "ENCODER",
+    "FLOW_SWITCH",
+    "HMD",
+    "LASER",
+    "LVDT",
+    "PHOTOCELL",
+    "PRESSURE_SWITCH",
+    "PROXIMITY"
+  ],
+  "holdout_month": "May-26",
+  "holdout_accuracy": 0.6944444444444444,
+  "cv_accuracy": 0.752906976744186,
+  "all_candidates": {
+    "random_forest": {
+      "cv_accuracy": 0.7645,
+      "holdout_accuracy": 0.6667
+    },
+    "hist_gradient_boosting": {
+      "cv_accuracy": 0.6715,
+      "holdout_accuracy": 0.4722
+    },
+    "logistic_regression": {
+      "cv_accuracy": 0.7122,
+      "holdout_accuracy": 0.6667
+    },
+    "catboost": {
+      "cv_accuracy": 0.7529,
+      "holdout_accuracy": 0.6944
+    }
+  }
+}
