@@ -1,0 +1,685 @@
+date,month,mins,reason_text,area,category,field_device,tag_source,source_file
+2025-11-15,Nov-25,60.0,"Bar overtravelled, 2 bars formed instead of 3, end of the longer bar got stuck, cutting done",SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-15,Nov-25,15.0,"Bar overtravelled, 1 bar stuck in roller table, cutting done",SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-15,Nov-25,60.0,"Cooling Bed sequence break, manual operation and cooling bed full",SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,25.0,BDM HMD cleaning,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,105.0,Blade change of saw #1 and saw#2 (Gib crane fault),SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,65.0,Hood #6 communication fault,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,6.0,"Bundling area vertical chain roller table photocell 1,2 & 3 not working",SBQ FINISHING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,45.0,OD2 was continuously active after 1st pass (exit HMD Fault 1 billet rejected),BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,10.0,Bundling area collecting chain full due to crane breakdown,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,35.0,Bundling area collecting chain full due to crane breakdown,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,5.0,Bundling area collecting chain full due to crane breakdown,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,15.0,Bundling area collecting chain full due to crane breakdown,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,5.0,#7 crane down position not reaching,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,20.0,Extraction trolley overtravelled,MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-16,Nov-25,80.0,Kick off not working,FURNACE,Field Device,LASER,book1_categorized,Book1.xlsx
+2025-11-17,Nov-25,20.0,Strapping m/c not working in auto,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-17,Nov-25,15.0,stand 4 & 7 motor overtemperature,MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-18,Nov-25,20.0,1 billet rejected at BDM due to HMD Continous sensing,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-18,Nov-25,20.0,1 billet rejected at BDM due to HMD Continous sensing,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-18,Nov-25,45.0,1 billet rejected at BDM due to HMD Continous sensing,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-18,Nov-25,38.0,"One billet overtravelled to BDM after rolled from one pass only, rejected",BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2025-11-18,Nov-25,10.0,Charging roller table drive tripped in over current,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-19,Nov-25,80.0,"shear #3 power fault, MCB tripped",MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-19,Nov-25,42.0,Metal overtravelled to Stopper after getting rolled from one pass only in BFM. rejected,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-19,Nov-25,15.0,Strapping Machine in Fault,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-19,Nov-25,100.0,Run out roller table overtravelled causing strapping machine fault,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-19,Nov-25,10.0,Strapping Machine in Fault,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-20,Nov-25,65.0,One metal rejected after BDM due to shear 1 lubrication oil flow low fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-20,Nov-25,9.0,Shear 1 lubrication oil flow low fault,MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-20,Nov-25,12.0,Shear 1 lubrication oil flow low fault,MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-17,Nov-25,30.0,Disapperaing stopper not able to lift for alignment,MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-17,Nov-25,10.0,OD#1 flickering in 2nd pass at BDM,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-22,Nov-25,20.0,BDM exit side guide exit transducer fault,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-11-22,Nov-25,15.0,Horizontal chain fault in bundling,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-22,Nov-25,60.0,"Bundling area full, due to unavaliability of crane",SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-22,Nov-25,235.0,2 Billet cobble at BDM due to side guide of exit side transduser fault,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-11-23,Nov-25,74.0,BDM exit side guide LVDT fault,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-11-23,Nov-25,10.0,Apron roller table motor fault,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-24,Nov-25,25.0,"Bundling area full, Bundle shifting not done due to DSL crane 7 power cut",CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-24,Nov-25,17.0,BDM HMD cleaning,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-24,Nov-25,22.0,Rolling stopped due to bundling area full,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-24,Nov-25,15.0,Rolling stopped due to bundling area full,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-24,Nov-25,25.0,"Crane 8 being used for inspection, shifting not being done",CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-24,Nov-25,35.0,Cooling bed exit roller table not moving in auto,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-24,Nov-25,10.0,disk saw upper clamp not working issuse,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-24,Nov-25,10.0,disk saw 2 roller table photocell sensing problem,SBQ FINISHING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-11-25,Nov-25,235.0,disk saw 1 motor trips again & again due to vibration in mandrel (cold shears ready for metal cutting com and balde change),SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-25,Nov-25,20.0,Cooling bed Extraction trolley synchronisation not ok,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-25,Nov-25,10.0,Cooling bed cut area disappearing stopper not moving up for synchronisation,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-25,Nov-25,25.0,0.75 Bar got chopped & 1 billet rejected after BDM due to emergency active in gate no #12 of cooling bed,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-25,Nov-25,33.0,"Bar is not aligning on bundling roller table instead it is aligning just before disapperaing stopper and showing waiting position, Commulative delay of 33 min",SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-22,Nov-25,50.0,Section c running in mannual,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-22,Nov-25,5.0,photocell of cold shear showing high,SBQ FINISHING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-11-22,Nov-25,55.0,billet over travelling in bdm due to unjammming pressure low,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-22,Nov-25,60.0,"billet over travelling in bdm due to unjamming pressure low, 1 cobble",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-22,Nov-25,20.0,"billet over travelling in bdm due to unjamming pressure low, 1 cobble",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-26,Nov-25,140.0,Delay continues from previous shift billet over travelling in bdm due to unjamming pressure low,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-26,Nov-25,8.0,OD1 (HMD ) cleaning inBDM,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-26,Nov-25,25.0,One billet rejected at BDM,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-27,Nov-25,34.0,Layer forming area in cb not in auto so 0.5 billet chopped,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-27,Nov-25,15.0,HMD cleaning in BDM,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-27,Nov-25,4.0,HMD OD1 Flickering,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-11-27,Nov-25,30.0,"kocks 415 V blower supply not ok,DC bus 1 warning",KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-27,Nov-25,30.0,GCS#17 unlock during rolling chopping and cobble removal(2 metal cobble),SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-29,Nov-25,15.0,Strapping machine fault,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-30,Nov-25,6.0,Slow rolling due to kocks cover got open during rolling,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-30,Nov-25,22.0,Elec working on kocks cover,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-30,Nov-25,23.0,BDM entry roller table 2 tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-11-30,Nov-25,25.0,One billet overtravelled in BDM,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,42.0,Charging crane #5 tripped,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,5.0,Lifting chain proxy was loose,SBQ FINISHING,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,27.0,Weighing proxy was loose,SBQ FINISHING,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,35.0,Billet rejected in Bdm due to stand #4 roller table fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,41.0,Mill entry HMD flickered due to scale (1 billet rejected),MILL,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,18.0,Bundling area full due to crane # 7 tripped,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,23.0,OD1 flickered,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,20.0,05 cycle gap in furnace due to elec working on billet deposite device,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,142.0,Emergency active in cooling bed,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,12.0,Stand#7 high temperature alarm,MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-03,Dec-25,10.0,DRT tripped,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-03,Dec-25,25.0,Bundling dissappearing stopper not coming up,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-03,Dec-25,40.0,Bundling dissappearing stopper not coming up,SBQ FINISHING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,43.0,emergency activated in rolling mill due to E40 RIO power MCB tripping,ROLLING MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,201.0,TWS DATA lost due to emergency active,,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,55.0,SH#4 chute flap mcc fault (chute position closed),SHEAR,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,40.0,kocks main motor drive fault,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-01,Dec-25,32.0,crun out roller table due to sequence break(high torque in cold shear),COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,10.0,Misalignment of section C,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,13.0,Misalignment of section C & D,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,11.0,Misalignment of section C & D,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,33.0,Misalignment of section C & D +Heat change in C.b,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,5.0,Auto sequence keep breaking for section c & D alignment,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,60.0,Cummulative delay of   1 hour due to Misalignment of section C & D,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,85.0,BDM roll gap transducer fault,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,4.0,absolute encoder not healthy alarm in furnace,FURNACE,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2025-12-02,Dec-25,6.0,cooling bed cycle gap given and length adjustment,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-03,Dec-25,3.0,Kick off arm encoder feedback missisng,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-12-03,Dec-25,8.0,Kick off arm encoder feedback missisng,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-12-03,Dec-25,10.0,Kick off arm encoder feedback missisng,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-12-03,Dec-25,5.0,Kick off arm encoder feedback missisng,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-12-03,Dec-25,8.0,Kick off arm encoder feedback missisng,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-12-03,Dec-25,11.0,Kick off arm encoder feedback missisng(6-7pm),FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-12-04,Dec-25,120.0,Shear #4 isolator changing work,SHEAR,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-05,Dec-25,310.0,Shear #4 isolator changing work,SHEAR,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-05,Dec-25,9.0,Bend billet inside furnace (manual discharging),FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2025-12-05,Dec-25,3.0,Bundling area full due to crane 7 tripped,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-05,Dec-25,5.0,8 cycle gap in furnace,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-06,Dec-25,40.0,One metal hot out due to spindle support unlocked,FURNACE,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2025-12-06,Dec-25,50.0,Kocks cover not able to open,KOCKS,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2025-12-06,Dec-25,17.0,"Furnace tripped, Combustion air pressure low",FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-06,Dec-25,15.0,stand 7 motor overtemperature,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-06,Dec-25,5.0,slow discharging due to slow charging due to PH3 flickering,FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-06,Dec-25,10.0,Bundling area full due to crane 7 tripped,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-07,Dec-25,26.0,shear #4 mode changing issue,SHEAR,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-07,Dec-25,6.0,Manual charged due to wrong billet length feedback,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-07,Dec-25,9.0,Bar mislaligned in C&D section,,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-07,Dec-25,6.0,Problem in charging due to encoder feedback issue,KOCKS,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2025-12-08,Dec-25,80.0,bar tracking fault in kocks (entry and exit hmd fault),KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-09,Dec-25,9.0,Discharging stopped due to kick off 2 not moving in reverse,FURNACE,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2025-12-09,Dec-25,10.0,Runout table photocell continue sensing high in bundling area,BUNDLING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-10,Dec-25,65.0,Bundling area extraction trolley overtravel,BUNDLING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-10,Dec-25,14.0,Stand-4 overtemperature alarm,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-12,Dec-25,55.0,Stand #6 motor torque over drive limit,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-12,Dec-25,20.0,shear #2 motor overtemperature,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-16,Dec-25,75.0,TMB 2.1 drive falut + kocks exit roller table drive fault,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-17,Dec-25,175.0,Cooling conveyor hood not positioning,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,25.0,Cooling bed full due to saw#1 wheel stopper auto-positioning fault,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,84.0,Cooling bed full due to saw#1 wheel stopper auto-positioning fault,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,30.0,Cooling bed full due to saw#1 wheel stopper auto-positioning fault,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,48.0,Cooling bed full due to saw#2 gear box luberication oil flow low,COOLING_BED,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,12.0,Cooling bed full due to saw#2 gear box luberication oil flow low,COOLING_BED,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,26.0,Cooling bed full due to saw#2 gear box luberication oil flow low,COOLING_BED,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,8.0,Cooling bed full due to saw#2 gear box luberication oil flow low,COOLING_BED,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,53.0,Cooling bed full due to saw#2 gear box luberication oil flow low + Saw 2 lifting arm not working,COOLING_BED,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,13.0,Temp raising in furnace,FURNACE,,,book1_categorized,Book1.xlsx
+2025-12-22,Dec-25,18.0,1 billet cobble + 1 hotout due to apron #6 coupling feedback lost during rolling,BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2025-12-26,Dec-25,50.0,BDM upper chock exit lock feedback Missing,BDM,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2025-12-26,Dec-25,39.0,Cooling bed full due to MCB breaker tripeed,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-26,Dec-25,4.0,C.B full,COOLING_BED,,,book1_categorized,Book1.xlsx
+2025-12-26,Dec-25,13.0,Sequence break in auto mode,,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-26,Dec-25,11.0,Sequence break in auto mode,,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-27,Dec-25,15.0,Saw 1 exit compactor issue,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-27,Dec-25,40.0,"Saw 1 exit upper clamp issue, cutting done in Saw 2",SAW,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2025-12-27,Dec-25,36.0,Saw#1 entry clamp feedback missing,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-27,Dec-25,14.0,Cooling bed full due to saw #1 exit compactor,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-27,Dec-25,17.0,Cooling bed full due to photocell #3 malfunctioning,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,18.0,Saw #1 stopper not lifting/ short bar removal,SAW,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,15.0,"BDM exit RT tripped, 1 billet cobble",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,67.0,"BDM exit RT tripped, 1 billet cobble",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,57.0,Descaler Pressure issue in bdm,BDM,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,130.0,Again BDM exit RT fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,5.0,Kick off laser line fixed,BDM,Field Device,LASER,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,50.0,One metal rejected due to BDM Roller Table tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,68.0,"Saw 1 Vibration fault, Saw 1 in fault (tripping)",SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,94.0,01 billet cobble due to bar tracking fault in kocks,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-28,Dec-25,13.0,only saw#2 inline,SAW,,,book1_categorized,Book1.xlsx
+2025-12-29,Dec-25,20.0,"CCL near full , metal overtravelled from Saw 1",SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-29,Dec-25,10.0,"Strapping machine issue, manual strapping done",BUNDLING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,10.0,Cooling bed runout roller table not running,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,32.0,"BDM RT-1 fault , 1 billet cobble",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,33.0,saw#2 entry compactor opening command missing/photocell detection issue,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,74.0,"BDM RT-1 fault , 1 billet cobble",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,10.0,shear #2 optimization cut tunning,SHEAR,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,16.0,saw#1 photocell flickering,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,39.0,saw #2 missed missed cut(electrical changed the wire),SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,21.0,Strapping machine RT not run in auto,BUNDLING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,10.0,Saw #2 tripped,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,80.0,Saw#2 disc detection photocell fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-30,Dec-25,12.0,One billet overtravelled in BDM due to HMD #2 high,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,30.0,DSL power cutting in BC way,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,24.0,Saw2 dia detection issue,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,6.0,Saw2 dia detection issue,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,9.0,Vertical chain cycle not taking in bundling,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,11.0,Vertical chain cycle not taking in bundling,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,38.0,Bundling run forward without strapping(photo cell issue),BUNDLING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,39.0,bundle overtravel without strapping,BUNDLING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,,Alignment issue in Saw #1,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,35.0,saw#1 de-dusting inspection by danieli team,SAW,,,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,15.0,"emergency actived from cooling bed, 1 billet auto chopped & 1 billet rejected after rolling in bdm",COOLING BED/ BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,15.0,Extraction trolley wrong feedback,,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,51.0,saw#2 is not working in auto and munully work,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,160.0,Reverse feedback missing (saw#2 arm),SAW,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,40.0,Saw#2 trail,SAW,,,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,17.0,Saw #2 trail,SAW,,,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,15.0,"Apron coupling 6 position unknown (1 metal chopped ,1 hotout)",COOLING_BED,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2025-12-31,Dec-25,22.0,Apron coupling 6 position unknown,COOLING_BED,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-01-01,Jan-26,10.0,Bar misaligned at extraction trolley ar cb,COOLING_BED,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-01-01,Jan-26,60.0,Bar misaligned at extraction trolley ar cb,COOLING_BED,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-01-01,Jan-26,12.0,Saw 1 and saw2 auto sequence breaking,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-01,Jan-26,8.0,Heat change and cycle gap,FURNACE,,,book1_categorized,Book1.xlsx
+2026-01-01,Jan-26,80.0,Cobble removal +Apron testing (continuity alarm in C.b ),COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-01,Jan-26,3.0,Kick off discharging condition not healty,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-01,Jan-26,3.0,Kick off discharging condition not healty,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-01,Jan-26,29.0,Downing proxy open (weighing ),,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-01-02,Jan-26,14.0,Saw 2 disc detection photocell fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-02,Jan-26,60.0,RIO 01 A200 network fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-02,Jan-26,75.0,One metal all shear and one metal rejected due to metal overshoot at cooling bed,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-02,Jan-26,8.0,Std#2 lubrication fault,BDM,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-01-02,Jan-26,10.0,BDM grease line cycle timeout,BDM,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-01-02,Jan-26,57.0,"Wrong work mode ,trail fell of flywheel side some wire burnt",,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,30.0,BDM Exit Roller Table tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,7.0,"Cold shear entry and exit roller tripped , Saw 2 clamp issue",SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,16.0,"BDM RT2 Tripped, one metal rejected",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,42.0,Billet bend in furnace kick off arm remained up,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,10.0,Electrical work at kick off machine,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,196.0,Electrical work at kick off machine,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,40.0,Kick off LVDT issue,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,16.0,Again kick off issue,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,10.0,Furnace discharging camera not working,FURNACE,,,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,146.0,"Metal didn't bite in stand 2, cobble removal & Pinch roll pinching time change",BDM,,,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,15.0,Saw#1 photocell issue due to dust,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,10.0,Saw#2 not in auto manual cutting(OPEARTION IS MUNUAL),SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,23.0,Saw#2 not in auto manual cutting (DISC PHOTO DETECTION ),SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,12.0,Saw#1 photocell flickering,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-03,Jan-26,30.0,Saw#1 photocell changed,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-04,Jan-26,26.0,01 metal cobble in BDM due to delivery oil temp transducer fault,BDM,Field Device,TT,book1_categorized,Book1.xlsx
+2026-01-04,Jan-26,20.0,Saw#1 exit roller table not working,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-04,Jan-26,37.0,Saw#1 exit roller table not working,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-05,Jan-26,12.0,Shear 2 roller table motor not running,SHEAR,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-05,Jan-26,110.0,Cooling bed hydraulic communication fault,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-05,Jan-26,22.0,Disc detection photocell fault in Saw 1,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-05,Jan-26,36.0,PLC power supply E401C1-JD01E40R1O02 Aprons area 24 vdc off,,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-05,Jan-26,10.0,Side compactor communication fault in saw #1,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-05,Jan-26,6.0,Saw#2 position feddback missing,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-05,Jan-26,35.0,FCE tripped due to CA fan VFD fault,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-05,Jan-26,5.0,Saw#1 exit compactor fault,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-06,Jan-26,18.0,Saw#1 photocell fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-06,Jan-26,13.0,Saw#1 upper clamp timeout,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-07,Jan-26,8.0,BDM OD1 sensing before first pass,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-01-08,Jan-26,44.0,Discharging delay due to furnace not ready,FURNACE,,,book1_categorized,Book1.xlsx
+2026-01-09,Jan-26,180.0,Extraction trolley not synchronised in cooling bed,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-09,Jan-26,5.0,CB full (auto sequence breaking of C & D section ),COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-09,Jan-26,35.0,Dissappearing stopper not getting up down,,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-01-09,Jan-26,13.0,Dissappearing stopper not getting up down,,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-01-10,Jan-26,11.0,disc detection photocell fault in saw 1,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-10,Jan-26,5.0,Extraction trolley not synchronised in cooling bed,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-10,Jan-26,7.0,furnace kick off issue,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-01-10,Jan-26,53.0,"Pinch Roll abnormal pinching, shear 1 missing front cuts",SHEAR,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-10,Jan-26,18.0,"One metal rejected due to metal stopped at PR0, didn't bite in Stand 2",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-10,Jan-26,14.0,Std 7 over temperature,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-10,Jan-26,6.0,"Pinch Roll abnormal pinching, shear 1 missing front cuts",SHEAR,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-10,Jan-26,11.0,Photocell detection issue & scale cleaning,,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-11,Jan-26,29.0,sequence break of cut to length area,,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-11,Jan-26,240.0,Kocks system error(taken wrong guide in system ),KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-12,Jan-26,13.0,CB full due to disc measuring fault.,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-12,Jan-26,13.0,CB full due to disc measuring fault.,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-12,Jan-26,30.0,CB full due to disc measuring fault.,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-12,Jan-26,17.0,"0.5 billet dropped due to CCL full alarm, crane extraction hold.",CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-12,Jan-26,7.0,"CB full due to slow cutting saw taking time, synchronize out.",COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-12,Jan-26,18.0,Saw disc dia measuring value photocell fault.,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-12,Jan-26,56.0,Saw disc dia measuring value photocell fault.,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-12,Jan-26,10.0,C.B full due to saw #1 problem,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-13,Jan-26,35.0,Saw 1 disk measuring photocell fault contiued from previous shift,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-13,Jan-26,11.0,saw2 entry upper clamp lifting/ lowering timeout,SAW,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-01-13,Jan-26,20.0,"Crane 7 for inspection, bundling area full",CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-13,Jan-26,20.0,1 metal rejected in BDM (od1 sensing problem),BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-01-14,Jan-26,26.0,communication fault in bundling,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-14,Jan-26,10.0,BDM motor vibration checking,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-14,Jan-26,12.0,Bar turner did not turn the metal in last pass,BDM,,,book1_categorized,Book1.xlsx
+2026-01-14,Jan-26,11.0,Billet overtraveled in bdm,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-01-15,Jan-26,8.0,Gear box oil flow minimum in saw#1(power supply fault),SAW,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-01-15,Jan-26,10.0,Gear box oil flow minimum in saw#1(power supply fault),SAW,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-01-15,Jan-26,12.0,SAW#1 tripped,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-15,Jan-26,31.0,Saw #1 exit roller table not working,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-15,Jan-26,21.0,Saw #1 luberication minimum,SAW,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-01-15,Jan-26,14.0,Saw#1 tripped,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-15,Jan-26,12.0,Saw#1 tripped,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-15,Jan-26,14.0,Slow cutting due to saw#1 trail failed & tripped again,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-15,Jan-26,10.0,One billet chopped due to CARP position unknown,,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-16,Jan-26,50.0,Crane No. 5 breakdown from previous shift,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-16,Jan-26,25.0,"Sequence broke in strapping machine , manually strapping done",BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-16,Jan-26,4.0,Furnace home position not coming,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-16,Jan-26,5.0,Strapping machine fault,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-16,Jan-26,5.0,Extraction trolley sequence break,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-16,Jan-26,21.0,Extraction trolley sequence break,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-17,Jan-26,24.0,Electrical worked on shear #1,SHEAR,,,book1_categorized,Book1.xlsx
+2026-01-17,Jan-26,6.0,Shear#1positioning,SHEAR,,,book1_categorized,Book1.xlsx
+2026-01-18,Jan-26,29.0,CB boggie synchronization not ok,COOLING_BED,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-01-18,Jan-26,36.0,BDM sequence brake in 2nd pass,BDM,,,book1_categorized,Book1.xlsx
+2026-01-18,Jan-26,6.0,C.B full due to photocell 6 & 10 flickering,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-18,Jan-26,10.0,Std#7 overtemp,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-18,Jan-26,12.0,DC link fault,,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-20,Jan-26,148.0,"due to sh#1 head cut missing,splitted head hit at std#6 guide",SHEAR,,,book1_categorized,Book1.xlsx
+2026-01-20,Jan-26,7.0,sh#1 head cut missing,SHEAR,,,book1_categorized,Book1.xlsx
+2026-01-21,Jan-26,180.0,Cold shear compressed air pressure low,COOLING_BED,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-01-22,Jan-26,31.0,"Saw#1 taken in line , saw#1 entry RT not working in auto",SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-22,Jan-26,9.0,saw#1 entry RT not working in auto,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-22,Jan-26,7.0,saw#1 entry RT not working in auto,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-22,Jan-26,17.0,saw#1 entry RT not working in auto,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-22,Jan-26,9.0,BDM EXIT RT not working,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-23,Jan-26,12.0,Photocell cleaning in CTL area,,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-01-24,Jan-26,13.0,OD1 cleaning in BDM,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-01-26,Jan-26,5.0,HMD cleaning in BDM,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-01-26,Jan-26,20.0,One billet rejected in BDM due to pinch roll 1 motor fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-26,Jan-26,31.0,One billet rejected in BDM due to pinch roll 1 motor fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-26,Jan-26,9.0,Strapping machin in fault (manual strapping done ),BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-26,Jan-26,43.0,Saw#2 upper clamp feedback missing,SAW,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-01-26,Jan-26,11.0,Saw#1 entry roller table fault,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-01-26,Jan-26,10.0,Saw#2 exit upper clamp lowering feedback missing,SAW,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-01-28,Jan-26,144.0,Cobble removal & mill readiness,BDM,,,book1_categorized,Book1.xlsx
+2026-01-28,Jan-26,9.0,CVR inspection,,,,book1_categorized,Book1.xlsx
+2026-01-28,Jan-26,7.0,CVR inspection,,,,book1_categorized,Book1.xlsx
+2026-01-28,Jan-26,11.0,Furnace kick off issue,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-01-28,Jan-26,34.0,1 billet rejected at bdm & 1 hotout due to wb#3 trolley position out during rolling,BDM,,,book1_categorized,Book1.xlsx
+2026-01-29,Jan-26,7.0,HMD 1 & HMD #2 cleaning,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-01-29,Jan-26,35.0,18 cycle gap in furnace,FURNACE,,,book1_categorized,Book1.xlsx
+2026-01-29,Jan-26,129.0,CVR diverter cummulative fault,,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-01,Feb-26,45.0,Fce Zone 7 tripped,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-01,Feb-26,22.0,"Metal stuck at stopper, one metal cobble at BDM",BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-02-01,Feb-26,16.0,1 metal cobble at BDM due to overtravelled,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-02-01,Feb-26,5.0,"Electrical work at pellet trolley , proxy found loose",SUND,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-02-01,Feb-26,5.0,Furnace zone 6 tripped,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-01,Feb-26,3.0,Pallet not moving forward,SUND,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-02-02,Feb-26,210.0,Descalar DC link fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-02,Feb-26,108.0,Descalar DC link fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-02,Feb-26,80.0,1 metal cobble and one rejected due to water box 3 out of position,BDM,Field Device,RFID,book1_categorized,Book1.xlsx
+2026-02-02,Feb-26,69.0,"One metal autochopped, Cobble in TMB, Proximity loose, one rejected in BDM",BDM,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-02-02,Feb-26,28.0,"One metal autochopped, Cobble in TMB, Proximity loose, one rejected in BDM",BDM,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-02-02,Feb-26,23.0,TMB snap shear not open,,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-02,Feb-26,8.0,Std 11 motor overtemperature,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-05,Feb-26,16.0,OD#1 cleaning,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-02-06,Feb-26,31.0,Saw 2 disc dia detection in fault 200*200*12,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-02-06,Feb-26,15.0,Furnace cycle gap 5( grease unit fault in charging),FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-06,Feb-26,8.0,Bundling storage photocell fault,BUNDLING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-02-06,Feb-26,5.0,Saw 2 disc dia detection in fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-02-07,Feb-26,90.0,Saw #2 exit photocell sensing issue,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-02-07,Feb-26,82.0,"Kocks ISU fault, 2 metals all shear'ed",KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-07,Feb-26,20.0,"Bdm exit transfer trolley roller tripped, 1 metal stopped rejected and 1 hot out",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-07,Feb-26,18.0,Metal stopped in BDM after 4th pass,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-02-07,Feb-26,50.0,Bundling area grease unit in fault 200*200*12,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-08,Feb-26,109.0,"2 metal all shear'ed due to Kocks fault, Kocks communication cable found loose",KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-08,Feb-26,105.0,"Emergency activated from WB#3 by pass roller table, Kocks in fault",KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-08,Feb-26,102.0,"Shear 4 DC link fault 200*200*12 56,60",SHEAR,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-08,Feb-26,65.0,Shear 3 continuous sensing after back end,SHEAR,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-02-08,Feb-26,8.0,Heat change,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-09,Feb-26,6.0,Fce kick off laser cleaning,FURNACE,Field Device,LASER,book1_categorized,Book1.xlsx
+2026-02-11,Feb-26,25.0,OD-6 high after reject billet and BDM exit roller table fault.,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-02-11,Feb-26,145.0,Cooling bed full bundling area vertical chain issue,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-11,Feb-26,35.0,BDM transfer trolley secA DRIVE FAULT 200*200*12,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-12,Feb-26,25.0,disc#1 and disc#2 dia detecting photocell in fault 200*200*12,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-02-12,Feb-26,6.0,od#1 cleaned,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-02-12,Feb-26,4.0,saw#2 dia detection photocell fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-02-13,Feb-26,38.0,One metal chopped and one metal hot out due to Kocks lubrication emergency active,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-14,Feb-26,25.0,"Cooling bed photocell flickering , Cooling bed RT fault 200*200*12 53, 40",COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-02-14,Feb-26,12.0,Strapping machine fault,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-15,Feb-26,60.0,Cooling bed extraction trolley misaligned,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-15,Feb-26,21.0,Emergency active in bundling area,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-15,Feb-26,16.0,"Cooling bed full, saw 2 seq break 200*200*12",COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-15,Feb-26,13.0,Bundling extraction trolley overtravel,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-15,Feb-26,12.0,Emergency active in bundling area,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-16,Feb-26,10.0,cold shear bucket change motor trip,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-16,Feb-26,43.0,Discharging door feedback not coming,FURNACE,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-02-16,Feb-26,16.0,Tying area roller not moving,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-16,Feb-26,9.0,Opening feedback not coming of furnace discharging door,FURNACE,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-02-16,Feb-26,6.0,Tying area roller not moving,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-16,Feb-26,4.0,Tying area roller not moving,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-17,Feb-26,41.0,Cold shear air pressure minimum,COOLING_BED,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-02-17,Feb-26,23.0,"Strapping machine in fault ,while manual strapping bar misaligned",BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-17,Feb-26,13.0,Bar misaligned in section C &D due to photocell high,,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-02-17,Feb-26,10.0,SAW#2 CUT MISS,SAW,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-17,Feb-26,9.0,Bundling entry extraction trolley misaligned,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-17,Feb-26,8.0,Cold shear air pressure minimum,COOLING_BED,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-02-17,Feb-26,7.0,Photocell cleaning in bundling area,BUNDLING,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-02-18,Feb-26,18.0,Cold shear air pressure minimum,COOLING_BED,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-02-18,Feb-26,10.0,Extraction trolley not synchronised in CB,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-18,Feb-26,7.0,Due to tracking error 1 bar mixed up,,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-19,Feb-26,54.0,Kocks tripped (Communication card changed),KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-19,Feb-26,28.0,"During biting pinch roll tripped , torque 100%",,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-19,Feb-26,28.0,Waterbox #2 cover not closed 200*200*1200,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-19,Feb-26,27.0,Kocks tripped due to overtemperture,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-19,Feb-26,15.0,Bdm RT2 exit side fault,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-02-20,Feb-26,43.0,shear #4 mode unknown,SHEAR,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-20,Feb-26,8.0,"Fce discharge laser showing wrong value, laser cleaning",FURNACE,Field Device,LASER,book1_categorized,Book1.xlsx
+2026-02-20,Feb-26,3.0,Billet skew due to wrong kickoff laser value,FURNACE,Field Device,LASER,book1_categorized,Book1.xlsx
+2026-02-20,Feb-26,3.0,Billet skew due to wrong kickoff laser value,FURNACE,Field Device,LASER,book1_categorized,Book1.xlsx
+2026-02-21,Feb-26,45.0,BDM tracking error after discharging +Bdm hmd cleaning in Bdm 200*200*6000 /200*200*12000,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-02-22,Feb-26,18.0,One metal rejected due to BDM exit roller table communication fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-23,Feb-26,142.0,Kocks stand 4 and 5 referencing command missing during stand change (Section change to 40mm),KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-24,Feb-26,60.0,Electrical worked on PRF RT 200*200*12000,,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-24,Feb-26,10.0,BDM exit RT tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-24,Feb-26,10.0,BDM exit RT in fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-24,Feb-26,8.0,CB full due to high viberation in both saw,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-24,Feb-26,7.0,Std#12 looper RT tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-24,Feb-26,5.0,Std#12 looper RT tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,110.0,Alignment issue in vertical chain & tying area roller are not moving,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,151.0,1 billet rejected at BDM due to Billet didn't enter 3rd pass,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,110.0,metal stucking in vertical chain wall 200*200*12,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,32.0,both strapping machine strap feeding,,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,30.0,slow rolling due to vertical tying wall changed by electrical from 370 to 250mm due to which each and every bar stuck in tying wall.,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,23.0,Tying position feedback missing,BUNDLING,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,19.0,cb full due to we take 5 bar in bundle.,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,14.0,cb full due to we take 5 bar in bundle.,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,9.0,slow rolling due to vertical tying wall changed by electrical from 370 to 250mm due to which each and every bar stuck in tying wall.,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-26,Feb-26,5.0,metal stucking in vertical chain wall,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-27,Feb-26,72.0,Bundling area full 200*200*12000,BUNDLING,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-27,Feb-26,76.0,bdm exit roller tabel tripping and drive communcation fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-28,Feb-26,80.0,BDM exit roller table tripping 200*200*12000,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-28,Feb-26,37.0,One metal rejected due to BDM exit roller table tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-02-28,Feb-26,11.0,BDM exit roller table in fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-01,Mar-26,15.0,Saw-1 disc diameter detection fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-03-02,Mar-26,12.0,BDM RT-1 cleaning,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-03,Mar-26,69.0,"BDM metal over-travel, 1 cobble",BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-03-03,Mar-26,14.0,BDM exit RT-1 & RT-2 tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-03,Mar-26,35.0,"BDM RT-1 & RT-2 trip, billet cobble",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-03,Mar-26,75.0,Charging crane tripped â 30 cycle gap,CRANE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-03,Mar-26,26.0,"BDM metal overtravel, rejected",BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-03-06,Mar-26,33.0,Billet over-travelled in BDM,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-03-06,Mar-26,158.0,BDM exit guide encoder fault,BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-03-06,Mar-26,48.0,FFB snap shear not working,SHEAR,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-03-07,Mar-26,6.0,Furnace CRT tripped,FURNACE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-07,Mar-26,26.0,Kocks drive fault â hot out,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-08,Mar-26,10.0,CVR flap not open feedback active,,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-03-09,Mar-26,13.0,Compactor air pressure low,,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-03-09,Mar-26,19.0,High profile not active â mill,,Field Device,HIP,book1_categorized,Book1.xlsx
+2026-03-09,Mar-26,29.0,"OD-1 flickering, billet rejected",BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-03-12,Mar-26,29.0,"OD-1 didnât sense, billet rejected",BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-03-15,Mar-26,27.0,Cooling bed photocell 9 & 10 flickering,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-03-19,Mar-26,151.0,Shear-4 encoder coupling loose (1.5 cobble),SHEAR,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-03-20,Mar-26,15.0,Electrical LCS change â Kocks stop,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-21,Mar-26,8.0,KOCKS tripped,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-22,Mar-26,5.0,Stand-4 motor over-temperature,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-24,Mar-26,15.0,BDM DC link (DEA-01) fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-25,Mar-26,20.0,BDM DRA-01 fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-26,Mar-26,10.0,Std-2 motor over-temperature alarm,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-27,Mar-26,10.0,Saw-2 exit clamp feedback missing,SAW,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-03-28,Mar-26,5.0,OD-1 sensing issue â slow rolling,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-03-28,Mar-26,150.0,BDM exit bar-turner transducer fault,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-03-29,Mar-26,17.0,Saw-2 upper clamp feedback missing,SAW,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-03-29,Mar-26,5.0,Std-2 motor over-temperature,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-03-30,Mar-26,41.0,BDM exit bar-turner didnât rotate,BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-03-31,Mar-26,7.0,Electrical work at compactor â pallet area full,SUND,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-02,Apr-26,60.0,Tmb gear positioning issue / section change,SC,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-02,Apr-26,105.0,Delay continues from previous shift(Cobble due to waterbox 3 position out),MILL,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-02,Apr-26,15.0,Pellet area full due to compatcor unit 1 in fault,CHA,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-03,Apr-26,66.0,"collecting arm did not open,one metal auto chopped,one rejected in bdm",REFORM TUB,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-03,Apr-26,42.0,"collecting arm did not open,one metal auto chopped,one rejected in bdm",REFORM TUB,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-03,Apr-26,6.0,od#3 high,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-03,Apr-26,21.0,one billet rejected in mill due to od#1 flickering,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-03,Apr-26,4.0,HMD 24 not reliable,ELECTRICAL,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-04,Apr-26,106.0,pallet area turning point not turning,PALLET,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-04,Apr-26,50.0,Kick off arm #1 LVDT broken,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-04,Apr-26,3.0,1 billet hotout due to TMB 1.1 overtemp alarm,TMB,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-04,Apr-26,8.0,1 metal rejected in BDM due to pit area not ready,CHA,,,book1_categorized,Book1.xlsx
+2026-04-04,Apr-26,230.0,Coil got stuck in reform tub + reform tub area auto sequence breaking frequently,CHA,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-05,Apr-26,100.0,"Kick off issue , not moving forward, electrical work at Kick off",ELECTRICAL,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-05,Apr-26,8.0,BDM Unjamming pressure low and materials overtravel,BDM,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-04-05,Apr-26,22.0,One metals cobble in due to BDM HMD EV1 not senseing in 2nd pass,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-06,Apr-26,20.0,"1 metal cobble in BDM , 3rd pass exit guide operator side fault",ELECTRICAL,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-07,Apr-26,8.0,1 billet rejected in BDM due to drive side exit side guide maximun opening,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-07,Apr-26,20.0,BDM HMD checking,ELECTRICAL,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-07,Apr-26,24.0,2 metal hot out due to stand 6 water delivery valve failed to open,ELECTRICAL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-04-07,Apr-26,5.0,Bundling photocell cleaning,ELECTRICAL,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,35.0,Section A & B roller table not working,BUNDLING,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,43.0,BDM exit RT tripped,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,8.0,04 cycle gap in fce due to CRT tripped,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,18.0,Sh#3 bucket door feedback missing,MILL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,9.0,One billet rejected in BDM due to BDM exit RT tripped,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,17.0,Saw#2 open close feedback missing,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,17.0,Saw#2 open close feedback missing,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,11.0,Saw#2 entry open close feedback missing,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,7.0,Saw#2 entry open close feedback missing,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,5.0,Saw#2 entry open close feedback missing,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,7.0,Saw#2 entry open close feedback missing,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,9.0,Saw#2 entry open close feedback missing,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-08,Apr-26,20.0,Saw#2 entry open close feedback missing,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-09,Apr-26,10.0,Kick off not lifting billet properly,FURNACE,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-09,Apr-26,25.0,Saw#2 forward reverse feedback missing,COOLING_BED,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-09,Apr-26,45.0,Saw#2 entry side clamp feedback missing,ELECTRICAL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-09,Apr-26,20.0,Cooling bed sequence breaking,ELECTRICAL,,,book1_categorized,Book1.xlsx
+2026-04-10,Apr-26,3.0,saw#2 clamp feedback issue,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-10,Apr-26,4.0,saw#2 clamp feedback issue,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-10,Apr-26,25.0,Elec team working in bdm(HMD elevation correction ),BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-10,Apr-26,12.0,05 cg in fce,MILL,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-10,Apr-26,14.0,Saw#2 auto sequence break,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-10,Apr-26,93.0,"Saw 1 lower clamp feedback missing, Saw 2 photocell high",ELECTRICAL,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-11,Apr-26,15.0,saw#1 exit upper clamp feedback missing,SAW,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-11,Apr-26,22.0,"EMERGENCY pressed in cb area ,one rejected ,one h/o",MILL,,,book1_categorized,Book1.xlsx
+2026-04-11,Apr-26,56.0,"bdm bar turner did not turn in 3rd pass(bar turner exit side maximum ccw position fault,one billet rejected",BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-11,Apr-26,5.0,Std. 7 overtemperature alarm,ELECTRICAL,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-11,Apr-26,26.0,Electrical work at BDM Exit bar Turner,ELECTRICAL,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-11,Apr-26,13.0,Std 7 overtemperature alarm,ELECTRICAL,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-11,Apr-26,122.0,One metal cobble and one rejected in BDM due to metal overshoot in cooling bed,ELECTRICAL,,,book1_categorized,Book1.xlsx
+2026-04-12,Apr-26,30.0,TWS not working (Delay in section change from 57mm to 60mm),MILL,,,book1_categorized,Book1.xlsx
+2026-04-12,Apr-26,39.0,"exit side guide in fault ,one billet rejected + hmd ,camera cleaning",BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-13,Apr-26,14.0,Side guide fault in BDM,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-13,Apr-26,128.0,Takeover fault in bamicon system (communication fault),MILLS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-13,Apr-26,15.0,Saw#1 entry roller table not working,COOLING_BED,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-13,Apr-26,10.0,Photocell alignment out,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-13,Apr-26,10.0,Photo cell cleaning,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-14,Apr-26,7.0,BDM RT2 warning,ELECTRICAL,,,book1_categorized,Book1.xlsx
+2026-04-14,Apr-26,7.0,Furnace cycle gap,FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-14,Apr-26,10.0,Furnace cycle gap,FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-14,Apr-26,10.0,BDM exit roller trip,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-15,Apr-26,12.0,BDM transfer trolley chain tightening + Scale cleaning + HMD cleaning,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-15,Apr-26,10.0,1 billet cobble at Bdm due to ev1 high,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-15,Apr-26,4.0,Bdm roller table tripped,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-16,Apr-26,15.0,"Delay continues from previous shift ( in Bdm in 2nd pass entry, metal not moving forward )",BDM,,,book1_categorized,Book1.xlsx
+2026-04-16,Apr-26,50.0,1 billet missroll in BDM due to overtravelled in 2nd pass,BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-16,Apr-26,5.0,BDM exit roller trip,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-16,Apr-26,28.0,Kocks guide #3 Motion timeout alarm (communication fault ),KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-16,Apr-26,29.0,Strapping machine fault,ELECTRICAL,,,book1_categorized,Book1.xlsx
+2026-04-18,Apr-26,25.0,Disc saw #2 photocell fault,CTL,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-18,Apr-26,15.0,Hi profile adjustment,WRL,,,book1_categorized,Book1.xlsx
+2026-04-18,Apr-26,20.0,Bdm hmd OD1 not sensing,MILL,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-18,Apr-26,20.0,Stand 13 roll cooling water minimum,MILL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-04-18,Apr-26,40.0,"Stand 13 roll cooling water minimum, flow switch changed",MILL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,17.0,Std#8 water flow minimum,MILL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,7.0,Sample checking,,,,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,10.0,Sample checking & Adjustment,,,,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,13.0,Taking HI- profile offline,,,,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,13.0,TAking HI- profile online,,,,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,13.0,1 billet rejected in BDM + 1 hotout due to std#13 gear box lubrication flow low,MILL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,95.0,Mill stopped due to Kocks fan alarm,ELECTRICAL,,,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,38.0,"Conveyor 403 sensor fault, one metal all shear'ed",ELECTRICAL,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,23.0,Reform tub proxy changed,ELECTRICAL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,12.0,Conveyor 403 issue,ELECTRICAL,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,53.0,Conveyor 403 issue,ELECTRICAL,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-19,Apr-26,13.0,Proxy change continued from previous shift,ELECTRICAL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-20,Apr-26,15.0,Electrical work at BDM HMD Air line,ELECTRICAL,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-20,Apr-26,55.0,Kocks emergency active,ELECTRICAL,,,book1_categorized,Book1.xlsx
+2026-04-20,Apr-26,21.0,TMB 2.2 delayed alarm fault,TMB,,,book1_categorized,Book1.xlsx
+2026-04-21,Apr-26,14.0,tmb#2.2 motor overtemperature,WRL,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-22,Apr-26,12.0,Kick off feedback missing,ELECTRICAL,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-22,Apr-26,5.0,Stand 4 overtemperature alarm,ELECTRICAL,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-22,Apr-26,24.0,Coil got stuck in reform tub,CHA,,,book1_categorized,Book1.xlsx
+2026-04-22,Apr-26,97.0,1 metal rejected in BDM due to lifting device is not working in pallet area,CHA,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-22,Apr-26,19.0,9 cycle gap in fce due billet deposite device in fault,CHARGING,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-23,Apr-26,17.0,"One billet rejected in BDM , metal overtravelled in 1st pass",ELECTRICAL,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-23,Apr-26,13.0,One metal hot out and one metal rejected due to billet overtravelled after second pass in BDM,ELECTRICAL,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-23,Apr-26,29.0,1 billet chopped & 1 rejected in bdm due to collecting arm didnât open,CHA,,,book1_categorized,Book1.xlsx
+2026-04-23,Apr-26,36.0,"Collecting arm didnât moved ,1 billet rejected in BDM",CHA,,,book1_categorized,Book1.xlsx
+2026-04-24,Apr-26,7.0,Std 8 cooling water low,ELECTRICAL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-04-24,Apr-26,6.0,2 cycle gap in fce,FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-24,Apr-26,7.0,5 cycle gap in fce,FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-24,Apr-26,5.0,5 cycle gap in fce,FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-24,Apr-26,22.0,"8 cycle gap in Fce , Heat change",FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-24,Apr-26,10.0,"8 cycle gap in Fce , Heat change",FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-24,Apr-26,4.0,2 cycle gap in fce,FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-24,Apr-26,115.0,Error in bamicon server and AIC communication fault,KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-26,Apr-26,10.0,TMB 2.2 & Stand 7 overtemperature,ELECTRICAL,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-26,Apr-26,60.0,Shear 4 compressed air low,MILL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-04-26,Apr-26,6.0,Run out RT not rotating in Bundling,BUNDLING,,,book1_categorized,Book1.xlsx
+2026-04-26,Apr-26,10.0,"Strapping mc1 not operating in auto/manual, strapping mc2 bundle not stopping in home position",BUNDLING,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-26,Apr-26,5.0,CB full (Problem in strapping mc),BUNDLING,,,book1_categorized,Book1.xlsx
+2026-04-26,Apr-26,12.0,CB full (Problem in strapping mc),BUNDLING,,,book1_categorized,Book1.xlsx
+,,7.0,RT#2 tripped and saw#1 lower clamp timeout,BDM,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+,,10.0,RT#2 tripped and saw#1 lower clamp timeout,COOLING_BED,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+,,10.0,CRT tripped and 03 cg in fce,FURNACE,,,book1_categorized,Book1.xlsx
+,,13.0,06 cg in fce due to billet deposit device proxy adj,FURNACE,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+,,123.0,Entry & exit roller table of shear in fault,MILL,,,book1_categorized,Book1.xlsx
+,,6.0,BDM Entry roller table warning,ELECTRICAL,,,book1_categorized,Book1.xlsx
+,,7.0,Saw 1 not running in auto,ELECTRICAL,,,book1_categorized,Book1.xlsx
+,,3.0,Photocell #1 and #2 didn't sense in cooling bed,ELECTRICAL,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+,,21.0,One metal rejected and one hot out due to metal didn't turn after second pass,ELECTRICAL,Field Device,ENCODER,book1_categorized,Book1.xlsx
+,,53.0,Metal all shear'ed in mill due to bar overtravelled in cooling bed,ELECTRICAL,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-28,Apr-26,38.0,Delay continue in previous shift,,,,book1_categorized,Book1.xlsx
+2026-04-28,Apr-26,5.0,BDM RT3 tripped 01 ho,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-28,Apr-26,135.0,Mech + elec working at Mill exit & pfm,MILL,,,book1_categorized,Book1.xlsx
+2026-04-28,Apr-26,17.0,Sample checking + std#4 water flow minimum,MILL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-04-28,Apr-26,71.0,C.B full due to clamp feedback issue os saw#2,CTL,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-04-28,Apr-26,10.0,Saw#2 exit RT tripped,CTL,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-28,Apr-26,5.0,Stand 4 water flow minimum,ELECTRICAL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-04-28,Apr-26,9.0,"Metal stopped in Descalar, rolled manually",ELECTRICAL,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-28,Apr-26,8.0,"OD#4, OD#6 flickering",ELECTRICAL,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-29,Apr-26,6.0,01 metal hot out due to RT3 tripped in bdm,BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-29,Apr-26,6.0,Saw-2 disc dia detection,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-29,Apr-26,27.0,Saw 2 disc dia detection fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-29,Apr-26,12.0,Furnace exit RT tripped,ELECTRICAL,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-04-29,Apr-26,6.0,"Metal stopped in BDM RT1, RT1 warning (rolled manually)",ELECTRICAL,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,10.0,CB continuity alarm,COOLING_BED,,,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,5.0,Saw#2 disk detection fault,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,20.0,Saw#2 disk detection fault,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,10.0,Roller table not working idue to saw#1 wheel stopper command blinking,COOLING_BED,,,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,10.0,All drive tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,80.0,10 cycle gap in fce + Walking beam not working in auto or manual mode + Mechanical worked at saw1 wheel stopper,"FCE,SAW",Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,6.0,Manual charging of billet (Issue in kick-in),FURNACE,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,5.0,Manual charging of billet (Issue in kick-in),FURNACE,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,21.0,6 cycle gap in fce + Walking beam not working in auto,FURNACE,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,4.0,Walking beam not working,FURNACE,,,book1_categorized,Book1.xlsx
+2026-04-30,Apr-26,135.0,Walking beam not working,FURNACE,,,book1_categorized,Book1.xlsx
+2026-05-01,May-26,17.0,Stand 2 and 4 water flow min,ROLLING MILL,Field Device,FLOW_SWITCH,book1_categorized,Book1.xlsx
+2026-05-01,May-26,7.0,Discharging photo cell high,RHF,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-01,May-26,8.0,Knives position error,SHEARS-SHEAR 4,Non-Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-01,May-26,7.0,BDM Exit roller table fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-01,May-26,3.0,BDM Entry RT3 Tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-01,May-26,3.0,BDM Entry RT3 Tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-02,May-26,19.0,one billet rejected in bdm due to bdm exit roller table 2 tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-02,May-26,5.0,hmd cleaning in bdm,BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-05-03,May-26,11.0,hmd cleaning due to cooling bed continuity alarm,ROLLING MILL,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-05-03,May-26,16.0,1 billet hotout (Billet didn't bite in 1st pass,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-04,May-26,73.0,"Apron roller table missed cuts, metal overtravelled",COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-05,May-26,7.0,RT1EV tripped 01 billet rejected,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-05,May-26,8.0,hmd 31 cleaning,RHF,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-05-05,May-26,11.0,Auto sequence break due to PH8 flickering,ROLLING MILL,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-05,May-26,16.0,Layer not moving in auto from saw 1 entry,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-05,May-26,15.0,Layer not moving in auto from saw 1 entry,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-05,May-26,21.0,bar misalign at saw#1 and saw#2,FINISHING AREA BARS-BUNDLING STATION,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-06,May-26,15.0,ph#3 flickering in cooling bed,COOLING_BED,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-06,May-26,11.0,Sequence breaking in cooling bed,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-06,May-26,4.0,sequence break at ctl,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-06,May-26,6.0,sequence break at ctl,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-07,May-26,13.0,bar overtavel in ctl roller table,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-07,May-26,28.0,Saw 1 exit upper clamp feedback missing,SAWS-DISC SAW 1,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-07,May-26,3.0,Exit RT fault,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-07,May-26,4.0,side  guide entry operator side in fault,BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-05-07,May-26,4.0,"ev1 flickerd,manually rolled",BDM,Field Device,HMD,book1_categorized,Book1.xlsx
+2026-05-09,May-26,84.0,BDM Transfer trolley alignment out,BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-05-10,May-26,52.0,"One metal hot out due to RT1 Tripped, Frontend stuck in reform tub",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-11,May-26,46.0,RT1 ev tripped and rejection bench clearing,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-11,May-26,5.0,Drive communication fault,FINISHING AREA WIRE ROD-COOLING CONVEYOR,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-11,May-26,15.0,Drive communication fault,FINISHING AREA WIRE ROD-COOLING CONVEYOR,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-11,May-26,40.0,Drive communication fault (2 billet chopped in mill and 1 hotout),FINISHING AREA WIRE ROD-COOLING CONVEYOR,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-12,May-26,46.0,One metal rejected due to abnormal cut in shear 1,SHEARS-SHEAR 1,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-05-12,May-26,7.0,STD 10 Overtemperature alarm,ROLLING MILL-STAND 10,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-12,May-26,6.0,BDM rt1 tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-13,May-26,2.0,bdm entry roller table tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-13,May-26,3.0,bdm entry rt tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-17,May-26,69.0,"Metal rejected in BDM , Delay continued from previous shift",BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-17,May-26,29.0,Saw 1 upper clamp feedback missing,SAWS-DISC SAW 1,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-17,May-26,14.0,Bundling weighing photocell issue,FINISHING AREA BARS-BUNDLING STATION,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-17,May-26,58.0,Saw 2 clamp feedback missing,SAWS-DISC SAW 2,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-17,May-26,2.0,disk detection fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-18,May-26,6.0,wrong length calculation by the system for 6m billet  (1 billet auto chopped in shear 4 ),ROLLING MILL,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-18,May-26,6.0,slow rolling of 6m billet,ROLLING MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-18,May-26,5.0,wrong length calculation by the system for 6m billet,ROLLING MILL,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-19,May-26,8.0,BDM RT tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-19,May-26,45.0,Cutting cycle not taking in auto and manual,SAWS-DISC SAW 1,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-19,May-26,33.0,extractioin trolly#3 striker out,COOLING_BED,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-20,May-26,5.0,extraction trolly#1 time out,FINISHING AREA BARS,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-20,May-26,28.0,Bundling area full(Bundle moved forward without strapping),FINISHING AREA BARS-TYING MACHINE,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-21,May-26,163.0,"1 )section change to 75 from 63 mm,sh#4 pinch roll change by mechanical,54'  2)bdm unjamming pressure resetting issue ,electrical+mechanical, 110'",BDM,Field Device,PRESSURE_SWITCH,book1_categorized,Book1.xlsx
+2026-05-22,May-26,102.0,"metal auto chopped in sh#3 ,head cut missed in sh#2, bend head stuck in exit roller table (operation and electric)",KOCKS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-22,May-26,2.0,bdm exit roller table tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-22,May-26,20.0,kick off arm#3 mc feedback missing,RHF,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-05-23,May-26,2.0,std#7 overtemperature alarm,ROLLING MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-23,May-26,19.0,sequence break in ctl,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-23,May-26,12.0,disk saw 2 disk detection fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-23,May-26,26.0,rollertable tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-23,May-26,12.0,bdm entry bar turner feedback missing,BDM,Field Device,LVDT,book1_categorized,Book1.xlsx
+2026-05-23,May-26,27.0,"1) RT lineup section#2,6,7 motor tripped 14'   2) bdm + mill inspection 13'",FINISHING AREA BARS,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-24,May-26,2.0,bdm exit rt tripped,BDM,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-24,May-26,6.0,stand 7 motor overtemp,ROLLING MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-24,May-26,7.0,4 cycle gap in fce,RHF,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-24,May-26,32.0,"Problem in disc saw 2 changing, Crane not available(CD bay DSL power cut)",SAWS-DISC SAW 2,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-24,May-26,38.0,"Problem in disc saw 2 changing, Crane not available(CD bay DSL power cut)",SAWS-DISC SAW 2,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-24,May-26,28.0,one billet ho due to bar turner did not turn in ist pass (e&m),BDM,Field Device,ENCODER,book1_categorized,Book1.xlsx
+2026-05-25,May-26,257.0,"rolling stopped due to empty furnace,CRANE#6 breakdown",RHF,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-25,May-26,74.0,"rolling stopped due to empty furnace,CRANE#6 breakdown",,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-25,May-26,3.0,Motor over temp,ROLLING MILL-STAND 7,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-25,May-26,14.0,Stand 2 blower supporting bolt replaced,ROLLING MILL,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-26,May-26,5.0,2 cycle gap (Billet deposit device position out),RHF,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-26,May-26,8.0,Knives pos following error,SHEARS-SHEAR 4,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-27,May-26,12.0,disk measuring fault,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-27,May-26,52.0,saw 2 photocell changing,SAW,Field Device,PHOTOCELL,book1_categorized,Book1.xlsx
+2026-05-28,May-26,10.0,Cooling water min,ROLLING MILL-STAND 4,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-29,May-26,8.0,Cooling bed aligning roller table tripped,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-30,May-26,18.0,C.B full due to bar got misaligned on extraction trolley in auto mode,COOLING_BED,Non-Field Device,,book1_categorized,Book1.xlsx
+2026-05-30,May-26,10.0,Flywheel positioning proxy fault,SHEARS-SHEAR 4,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-30,May-26,29.0,Flywheel positioning proxy fault,SHEARS-SHEAR 4,Field Device,PROXIMITY,book1_categorized,Book1.xlsx
+2026-05-31,May-26,111.0,Electrical working in drag chain speed,FINISHING AREA WIRE ROD,Field Device,ENCODER,book1_categorized,Book1.xlsx
+,Jan-26,43.0,One metal hot out due to billet front bend,,Non-Field Device,,legacy_supplementary,legacy_master_events.csv
+,Jan-26,42.0,,,Non-Field Device,,legacy_supplementary,legacy_master_events.csv
+,Jan-26,24.0,,,Non-Field Device,,legacy_supplementary,legacy_master_events.csv
+,Apr-26,5.0,Kick off malfunctioning,,Field Device,LVDT,legacy_supplementary,legacy_master_events.csv
+,Apr-26,15.0,"FFB, TMB water pressure not ok",,Field Device,PRESSURE_SWITCH,legacy_supplementary,legacy_master_events.csv
+,Apr-26,52.0,Tmb drives fault,,Non-Field Device,,legacy_supplementary,legacy_master_events.csv
+,Apr-26,10.0,1 billet skew manual discharging,,Field Device,HMD,legacy_supplementary,legacy_master_events.csv
+,Apr-26,45.0,Cobble due to waterbox 3 position out,,Field Device,PROXIMITY,legacy_supplementary,legacy_master_events.csv
+,Apr-26,20.0,1 pump taken in line from utility as pressure decreasing,,Field Device,PRESSURE_SWITCH,legacy_supplementary,legacy_master_events.csv
+,Apr-26,9.0,Pallet area sensor cleaning by elec,,Field Device,PROXIMITY,legacy_supplementary,legacy_master_events.csv
+,Apr-26,22.0,One metals cooble in due to BDM HMD EV1 not senseing in 2nd pass,,Field Device,HMD,legacy_supplementary,legacy_master_events.csv
+,Apr-26,35.0,Saw 2 forward/backward feedback missing,,Field Device,LVDT,legacy_supplementary,legacy_master_events.csv
+,Apr-26,15.0,Saw 1 blade change and BDM HMD Cleaning,,Field Device,HMD,legacy_supplementary,legacy_master_events.csv
+,Apr-26,15.0,BDM HMD cleaning (checklist activities done),,Field Device,HMD,legacy_supplementary,legacy_master_events.csv
+,Apr-26,77.0,38 cycle gap in Fce due to mechanical work in crane,,Non-Field Device,,legacy_supplementary,legacy_master_events.csv
+,Apr-26,5.0,Descaler pressure dropped,,Field Device,PRESSURE_SWITCH,legacy_supplementary,legacy_master_events.csv
+,Apr-26,15.0,"BDM HMD Cleaning, check sheet done",,Field Device,HMD,legacy_supplementary,legacy_master_events.csv
+,Apr-26,16.0,Shear 4 bucket change & bdm hmd cleaning,,Field Device,HMD,legacy_supplementary,legacy_master_events.csv
+,Apr-26,20.0,Std#6 water flow minimum,,Field Device,FLOW_SWITCH,legacy_supplementary,legacy_master_events.csv
+,Apr-26,12.0,H1 pressure dropped,,Field Device,PRESSURE_SWITCH,legacy_supplementary,legacy_master_events.csv
+,Apr-26,10.0,Bdm operator side roll balancing pressure low,,Field Device,PRESSURE_SWITCH,legacy_supplementary,legacy_master_events.csv
+,Apr-26,41.0,LH PR oil bushing pressure minimum,,Field Device,PRESSURE_SWITCH,legacy_supplementary,legacy_master_events.csv
+2026-07-16,Jul-26,,photocell shutdown,,,PHOTOCELL,live_prediction,live_log_event
+2026-07-16,Jul-26,,"Encoder position feedback fault, billet stuck",,,ENCODER,live_prediction,live_log_event

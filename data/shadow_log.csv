@@ -1,0 +1,2 @@
+shadow_id,logged_at,reason_text,area,mins,predicted_device,confidence,actual_device,resolved_at,reviewer_note,agreement
+6c0a0413,2026-07-17T13:38:42.559164,Photocell lens dirty at cold saw,,,PHOTOCELL,0.8117,PHOTOCELL,2026-07-17T13:40:10.270212,,True

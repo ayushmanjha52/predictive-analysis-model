@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Combi Mill / Field Device Reliability</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <p class="brand-eyebrow"><span class="dot"></span> LIVE &middot; DELAY LOG PIPELINE</p>
+    <h1 class="brand-title">COMBI MILL <span class="slash">/</span> FIELD DEVICE RELIABILITY</h1>
+    <p class="brand-sub" id="brandSub">Tata Steel — Breakdown Mill<span class="sep">&middot;</span>Real-Time Reliability Monitoring</p>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- KPI cards -->
+  <section class="kpi-grid">
+    <div class="kpi-card c-accent">
+      <p class="kpi-label">Total Field-Device Delay</p>
+      <p class="kpi-value" id="kpiTotalMinutes">—</p>
+      <p class="kpi-foot" id="kpiTotalMinutesFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card c-gold">
+      <p class="kpi-label">Devices Monitored</p>
+      <p class="kpi-value" id="kpiTaggedEvents">—</p>
+      <p class="kpi-foot" id="kpiTaggedEventsFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card c-blue">
+      <p class="kpi-label">Top Contributor (Volume)</p>
+      <p class="kpi-value small" id="kpiTopVolume">—</p>
+      <p class="kpi-foot" id="kpiTopVolumeFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card c-teal">
+      <p class="kpi-label">Top Contributor (Severity)</p>
+      <p class="kpi-value small" id="kpiTopSeverity">—</p>
+      <p class="kpi-foot" id="kpiTopSeverityFoot">&nbsp;</p>
+    </div>
+  </section>
+
+  <!-- Alerts -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Alerts &amp; Findings</h2>
+    </div>
+    <div id="alertsContainer">
+      <div class="alert info"><p class="alert-title">Loading findings…</p></div>
+    </div>
+  </section>
+
+  <!-- Monthly trend line chart -- uses Chart.js (loaded via CDN, was
+       previously unused despite being included) -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Monthly Trend</h2>
+      <span class="panel-note">Top 5 devices &middot; delay-minutes per month</span>
+    </div>
+    <canvas id="trendChart" height="110"></canvas>
+  </section>
+
+  <div class="two-col">
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Delay Share by Device</h2>
+        <span class="panel-note">Total minutes, all months</span>
+      </div>
+      <div id="paretoBars"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Predicted Delay Share — Next 6 Months</h2>
+        <span class="panel-note">Which device is expected to cause the most delay, by % share</span>
+      </div>
+      <div id="forecastBars"></div>
+      <p class="panel-footnote" id="forecastFootnote">&nbsp;</p>
+
+      <!-- Per-device 6-month forecast checker -->
+      <div class="forecast-check-row">
+        <select id="forecastDeviceSelect" title="Choose a device" aria-label="Choose a device"></select>
+        <button class="btn-check" id="checkForecastBtn">Check 6-Month Forecast</button>
+      </div>
+      <div id="forecastCheckResult" class="forecast-check-result"></div>
+    </section>
+  </div>
+
+  <!-- Red-zone areas -- which 2 areas currently carry the most delay -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Red-Zone Areas</h2>
+      <span class="panel-note">Which areas carry the most delay right now, by % share</span>
+    </div>
+    <div id="areaRiskBars"></div>
+  </section>
+
+  <!-- Review queue -- unresolved delays ranked by impact, for a human
+       to tag manually. Only ~1-2% of unresolved delays contain a safely
+       auto-taggable device signal; the rest need human judgment. -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Untagged Delay Review Queue</h2>
+      <span class="panel-note" id="reviewQueueNote">Highest-impact unresolved delays first</span>
+    </div>
+    <div class="scroll-x">
+      <table class="log-table">
+        <thead><tr><th>Date</th><th>Area</th><th>Minutes</th><th>Reason</th></tr></thead>
+        <tbody id="reviewQueueBody"><tr><td colspan="4" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Shadow-mode validation -- tracks predicted-vs-actual agreement
+       once real usage begins via /shadow_predict + /shadow_resolve.
+       Empty/zero state is expected until the team starts using it. -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Shadow-Mode Validation</h2>
+      <span class="panel-note">Predicted vs. actual agreement — the basis for trusting this system with real decisions</span>
+    </div>
+    <div id="shadowStatsBody">Loading…</div>
+  </section>
+
+  <!-- Shadow-mode review form -- for a non-technical reviewer.
+       Two steps, deliberately kept separate on screen: Step 1 logs the
+       delay and gets a prediction recorded WITHOUT showing it. Step 2
+       only unlocks after Step 1, and only then reveals whether the
+       reviewer's independent finding matched. -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Shadow-Mode Review</h2>
+      <span class="panel-note">Log a real delay, diagnose it yourself, then see if the model agreed</span>
+    </div>
+
+    <div id="shadowStep1">
+      <label class="field-label" for="shadowReasonInput">Delay description</label>
+      <textarea id="shadowReasonInput" placeholder="e.g. Bundling area photocell 1,2 & 3 not working"></textarea>
+
+      <div class="mins-row">
+        <div class="field">
+          <label class="field-label" for="shadowAreaInput">Area (optional)</label>
+          <select id="shadowAreaInput"><option value="">Unknown / not specified</option></select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="shadowMinsInput">Duration (minutes, optional)</label>
+          <input type="number" id="shadowMinsInput" min="0" placeholder="e.g. 25">
+        </div>
+      </div>
+
+      <button class="btn-run btn-run-inline mt-16" id="shadowLogBtn">Log This Delay</button>
+      <div id="shadowStep1Error"></div>
+    </div>
+
+    <div id="shadowStep2" class="shadow-step2-hidden">
+      <p class="panel-note mb-12">Logged. Now diagnose the delay yourself — as you normally would — then record what you actually found. The model's prediction stays hidden until you submit this.</p>
+
+      <label class="field-label" for="shadowActualSelect">What did you actually find caused this delay?</label>
+      <select id="shadowActualSelect"></select>
+
+      <label class="field-label mt-14" for="shadowNoteInput">Note (optional)</label>
+      <textarea id="shadowNoteInput" placeholder="Any extra detail about the diagnosis"></textarea>
+
+      <button class="btn-run btn-run-accent btn-run-inline mt-16" id="shadowResolveBtn">Record My Finding &amp; Compare</button>
+      <div id="shadowStep2Error"></div>
+    </div>
+
+    <div id="shadowResultBlock" class="result-block">
+      <div class="result-device-row">
+        <span class="result-device-dot" id="shadowResultDot"></span>
+        <span class="result-device-name" id="shadowResultOutcome">—</span>
+      </div>
+      <p class="result-conf">Model predicted <span class="mono" id="shadowResultPredicted">—</span> · You found <span class="mono" id="shadowResultActual">—</span></p>
+      <button class="btn-run btn-run-inline mt-14" id="shadowNewReviewBtn">Review Another Delay</button>
+    </div>
+  </section>
+
+  <!-- Device x Area breakdown -- the specific "which device, which area" requirement -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Device &times; Area Breakdown</h2>
+      <span class="panel-note">Which device, in which area, drives the most delay</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Device</th><th>Area</th><th>Total Min</th><th>Avg Min/Event</th><th>Events</th></tr></thead>
+        <tbody id="areaTableBody"><tr><td colspan="5" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Severity table (field devices, reliable sample size) -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Severity vs. Frequency vs. FMEA Risk — Field Devices</h2>
+      <span class="panel-note">Total volume &ne; per-incident severity — both matter, for different reasons</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Device</th><th>Avg Min/Event</th><th>Max Single Event</th><th>Events</th><th>FMEA Risk</th><th>Recommendation</th></tr></thead>
+        <tbody id="sevTableBody"><tr><td colspan="6" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Low-sample devices, shown separately -- never used for Top
+       Contributor rankings since a single event isn't statistically
+       meaningful for severity comparison -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Other Devices — Low Sample Size</h2>
+      <span class="panel-note">Fewer than 5 recorded events — shown for reference, excluded from rankings above</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Device</th><th>Avg Min/Event</th><th>Max Single Event</th><th>Events</th><th>FMEA Risk</th></tr></thead>
+        <tbody id="lowSampleTableBody"><tr><td colspan="5" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

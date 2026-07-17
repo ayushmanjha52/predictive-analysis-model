@@ -1,0 +1,9 @@
+device,rpn,severity,occurrence,detection,risk_level
+HMD,320,8,5,8,High
+PHOTOCELL,240,6,5,8,Medium
+ENCODER,280,7,5,8,High
+LVDT,210,7,4,7.5,Medium
+PROXIMITY,180,6,4,7.5,Medium
+PRESSURE_SWITCH,150,5,4,7.5,Low
+FLOW_SWITCH,140,5,4,7,Low
+LASER,192,6,4,8,Medium
