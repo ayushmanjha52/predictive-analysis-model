@@ -1,36 +1,18 @@
 """
-Data ingestion: reconciles Book1.xlsx (the primary, already-categorized
-source) with the legacy master_events.csv (from earlier unification of
-7 monthly files) -- WITHOUT double-counting.
+Builds data/master_events.csv from the raw mill delay files.
 
-CONFIRMED before writing this: 536 of Book1's 566 unique delay
-descriptions are the exact same text as rows already in
-legacy_master_events.csv -- these are two exports of the SAME
-underlying data, not complementary datasets. Concatenating them
-directly would have duplicated ~536 events.
+Sources:
+  1. raw_delays.xlsx (primary; already categorized).
+  2. legacy_master_events.csv: only rows whose reason text is NOT in the
+     primary file are added (the two files are ~95% overlapping exports
+     of the same delays). Known form-header artifacts are dropped.
 
-Reconciliation approach:
-  1. Book1.xlsx is treated as the primary source (cleaner, already has
-     Category/Sub_Category, one consistent file).
-  2. Only rows in legacy_master_events.csv whose reason_text does NOT
-     already appear in Book1 are considered for inclusion.
-  3. Of those, 3 were confirmed to be pure data artifacts (a stray Excel
-     form header that leaked in during earlier unification -- "Name:
-     Anshika Srivastava", "Designation: Assistant Manager", and a blank
-     "Date" row) -- these are dropped entirely, not treated as delays.
-  4. The remaining ~20 rows are genuine real events Book1 is missing
-     (mostly April 2026, already correctly tagged with a field device)
-     -- these are added in, normalized to the same schema as Book1.
-
-Also normalizes, in one place, every messy-data issue found in Book1:
-  - Category column mixes letter codes (F, FD, M, A, D, C, S) and full
-    text ("Field Device", "Non-Field Device") in the SAME column.
-  - Sub_Category has compound labels ("HMD / LVDT") and inconsistent
-    device naming (PH vs Photocell, PX vs Proximity, LASER vs Laser).
-  - Area has the same physical area written many different ways
-    (bdm/BDM, furnace/Furnace/FURNACE/fce/Fce).
-  - Date mixes string format ("15/11/2025") and real datetime objects
-    in the same column.
+Normalization:
+  - Category mixes letter codes (F, FD, M, A, D, C, S) and full text.
+  - Sub_Category has compound labels ("HMD / LVDT") and abbreviations
+    (PH, PX, PS, FS) -> one canonical device name each.
+  - Area spellings (bdm/BDM, furnace/fce, ...) -> one name each.
+  - Dates mix strings ("15/11/2025") and datetime objects.
 """
 import logging
 import datetime as dt
@@ -47,9 +29,7 @@ RAW_DELAYS_PATH = DATA_DIR / "raw_delays.xlsx"
 LEGACY_MASTER_PATH = DATA_DIR / "legacy_master_events.csv"
 OUTPUT_PATH = DATA_DIR / "master_events.csv"
 
-# Category letter-code -> canonical text. Handles the mixed-encoding bug
-# found directly in Book1: some rows use "F"/"FD", others use the full
-# "Field Device" string, for the same meaning.
+# Category letter codes -> canonical text.
 CATEGORY_MAP = {
     "F": "Field Device", "FD": "Field Device", "Field Device": "Field Device",
     "M": "Non-Field Device", "A": "Non-Field Device", "D": "Non-Field Device",
@@ -57,9 +37,7 @@ CATEGORY_MAP = {
     "Non-Field Device": "Non-Field Device",
 }
 
-# Sub-category / device vocabulary normalization -- collapses both
-# abbreviation variants (PH, PX, PS, FS) and casing variants (LASER vs
-# Laser) to ONE canonical device name per concept.
+# Sub-category abbreviations / casing -> canonical device name.
 DEVICE_NORMALIZE = {
     "PH": "PHOTOCELL", "PHOTOCELL": "PHOTOCELL",
     "PX": "PROXIMITY", "PROXIMITY": "PROXIMITY",
@@ -69,18 +47,13 @@ DEVICE_NORMALIZE = {
     "LVDT": "LVDT",
     "ENCODER": "ENCODER",
     "LASER": "LASER",
-    "P": "PHOTOCELL",  # bare "P" appeared 36x in Sub_Category -- context
-                        # (co-occurring with PH/Photocell counts) strongly
-                        # suggests this is also photocell shorthand; flag
-                        # for manual confirmation if this assumption is wrong
+    "P": "PHOTOCELL",  # bare "P" is photocell shorthand in Sub_Category
     "TT": "TT",
     "RFID": "RFID",
     "HIP": "HIP",
 }
 
-# Area name normalization -- collapses casing + a few known synonyms.
-# Extend this map as new variants are found; unmatched values pass
-# through title-cased rather than being dropped.
+# Area synonyms; unmatched values pass through upper-cased.
 AREA_SYNONYMS = {
     "fce": "FURNACE", "furnace": "FURNACE",
     "bdm": "BDM",
@@ -102,15 +75,8 @@ def normalize_category(val):
 
 
 def primary_device(val):
-    """Collapses compound sub-categories (e.g. 'HMD / LVDT') to the
-    first-listed device, then normalizes vocabulary via DEVICE_NORMALIZE.
-    Non-device sub-categories (e.g. 'Automation / Sequence') pass through
-    as None here -- they're not field devices, handled separately.
-
-    FIX: lookup is case-insensitive now. Confirmed bug: raw Sub_Category
-    values include title-case forms ('Photocell', 'Proximity') that
-    didn't match the all-caps DEVICE_NORMALIZE keys, silently leaving
-    29 real field-device rows with no resolved device."""
+    """First device of a compound sub-category, normalized via
+    DEVICE_NORMALIZE (case-insensitive). Non-device sub-categories -> None."""
     if pd.isna(val):
         return None
     first = str(val).split("/")[0].strip()
@@ -165,17 +131,10 @@ def load_book1():
     return rows
 
 
-# Reason texts confirmed to be pure data artifacts (a stray Excel form
-# header that leaked into the legacy CSV during earlier unification),
-# not real delay events -- excluded unconditionally.
-# Process outcomes/symptoms that were previously mistakenly treated as
-# field devices in an earlier version of this project (confirmed: FMEA
-# Severity/Occurrence/Detection ratings don't meaningfully apply to a
-# symptom the way they apply to a component's failure mode). Never
-# treated as a resolvable field device, even if a legacy source tagged
-# them that way.
+# Process symptoms that are not field devices; never used as a device label.
 NON_DEVICE_CATEGORIES = {"SEQUENCE_BREAK", "OVERTRAVEL", "ROLLER_TABLE"}
 
+# Form-header rows that leaked into the legacy export.
 KNOWN_ARTIFACT_REASONS = {
     "anshika srivastava",
     "assistant manager",
@@ -184,9 +143,7 @@ KNOWN_ARTIFACT_REASONS = {
 
 
 def load_legacy_supplementary_rows(book1_reasons_lower):
-    """Only rows from the legacy master_events.csv whose reason_text is
-    NOT already present in Book1 -- prevents double-counting the ~536
-    rows confirmed to be duplicates. Artifact rows are dropped."""
+    """Legacy rows whose reason text is not already in the primary file."""
     legacy = pd.read_csv(LEGACY_MASTER_PATH)
     rows = []
     n_skipped_duplicate = 0
@@ -201,16 +158,8 @@ def load_legacy_supplementary_rows(book1_reasons_lower):
             n_skipped_duplicate += 1
             continue
         d = normalize_date(row.get("date"))
-        # FIX: legacy_master_events.csv's field_device column is ALREADY
-        # canonical (e.g. "PRESSURE_SWITCH", "FLOW_SWITCH") -- it is the
-        # OUTPUT of a previous normalization pass, not raw input. Running
-        # it back through DEVICE_NORMALIZE (whose keys are raw
-        # abbreviations like "PS"/"FS") silently dropped every row whose
-        # legacy device name wasn't also a valid INPUT key. Confirmed:
-        # 8 real Pressure_Switch/Flow_Switch rows lost this way. Fix: use
-        # the legacy value directly (after stripping compound labels),
-        # only falling back to DEVICE_NORMALIZE if it happens to still be
-        # a raw abbreviation for some reason.
+        # Legacy field_device values are already canonical; normalize only
+        # if a raw abbreviation slipped through.
         legacy_device_raw = row.get("field_device")
         legacy_device = None
         if pd.notna(legacy_device_raw):
@@ -231,7 +180,7 @@ def load_legacy_supplementary_rows(book1_reasons_lower):
 
     logger.info(f"Legacy reconciliation: {n_skipped_duplicate} rows skipped as duplicates of Book1, "
                 f"{n_skipped_artifact} rows skipped as known artifacts, "
-                f"{len(rows)} genuine supplementary rows added")
+                f"{len(rows)} supplementary rows added")
     return rows
 
 
@@ -242,7 +191,7 @@ def main():
 
     book1_reasons_lower = {r["reason_text"].strip().lower() for r in book1_rows}
 
-    logger.info("Reconciling with legacy master_events.csv (supplementary rows only)...")
+    logger.info("Adding legacy rows not present in the primary file...")
     supplementary_rows = load_legacy_supplementary_rows(book1_reasons_lower)
 
     all_rows = book1_rows + supplementary_rows

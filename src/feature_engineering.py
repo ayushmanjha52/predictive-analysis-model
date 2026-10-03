@@ -1,23 +1,14 @@
 """
-Feature engineering -- the ONE implementation used by training,
-prediction, and every test. Never reimplemented elsewhere.
+Feature engineering shared by training, prediction and tests.
 
-Includes area as a real feature this time (previous versions of this
-project only used text), since area-wise breakdown is now a stated
-requirement.
-
-Multi-site: also includes a one-hot plant_type feature (steel rolling
-mill vs. nuclear power plant ...), so the model can learn that some
-device classes only occur at some kinds of plant while still sharing
-device vocabulary ("pressure switch", "flow switch", "LVDT") across
-all of them. The plant type is always known at prediction time (it's
-the site the delay is logged at), so this is not leakage.
-
-Text features: word 1-2 grams PLUS character 3-5 grams. The char
-n-grams were added because the delay log is full of misspellings and
-shorthand that word n-grams treat as unrelated tokens -- confirmed in
-the real data: "continous", "missisng", "luberication", "proxy" (for
-proximity), "fce" (furnace).
+Features:
+  - word 1-2 gram and character 3-5 gram TF-IDF (character n-grams cope
+    with the log's misspellings and shorthand: "continous", "missisng",
+    "proxy", "fce"),
+  - keyword-group flags and text-length stats,
+  - one-hot area,
+  - one-hot plant type (steel rolling mill, nuclear power, ...). The
+    plant type is known at prediction time, so this is not leakage.
 """
 import re
 import sys
@@ -51,8 +42,9 @@ DOMAIN_KEYWORDS = {
     "kw_trip": ["trip", "scram", "shutdown", "actuation"],
 }
 
-# Fixed list (not learned from data) -> the plant-type one-hot columns
-# are always identical between training and inference.
+FEATURE_PREFIXES = ("kw_", "area_", "pt_", "tfidf_")
+
+# Fixed list so plant-type columns are identical at train and inference time.
 PLANT_TYPES = [config.HOME_PLANT_TYPE, "NUCLEAR_POWER", "THERMAL_POWER", "HYDRO_POWER",
                "GRID_SUBSTATION", "OTHER"]
 
@@ -67,9 +59,7 @@ def clean_text(text) -> str:
 
 
 def create_domain_features(df: pd.DataFrame, text_col: str = "clean_text") -> pd.DataFrame:
-    """Binary keyword-group flags + text stats. Every column computed
-    from the row's own text -- safe to call on a single new row at
-    inference time, no cross-row statistics involved."""
+    """Binary keyword-group flags + text stats (per-row, no cross-row statistics)."""
     df = df.copy()
     texts = df[text_col].fillna("")
     for feat_name, keywords in DOMAIN_KEYWORDS.items():
@@ -80,13 +70,8 @@ def create_domain_features(df: pd.DataFrame, text_col: str = "clean_text") -> pd
 
 
 def create_area_features(df: pd.DataFrame, area_col: str = "area", known_areas=None) -> pd.DataFrame:
-    """
-    One-hot area features. `known_areas` MUST be passed at inference
-    time (the exact list from training) so a new row produces the same
-    columns as training did, in the same set -- this is the same
-    train/predict alignment principle as the TF-IDF vectorizer, applied
-    to area instead of text.
-    """
+    """One-hot area features. Pass the training-time `known_areas` at
+    inference so the columns match."""
     df = df.copy()
     area_clean = df[area_col].fillna("UNKNOWN").astype(str).str.upper().str.strip()
     if known_areas is None:
@@ -110,9 +95,7 @@ def create_plant_type_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def make_vectorizer(n_docs: int):
-    """Word + char n-gram TF-IDF. Vocabulary caps scale with data size
-    -- the old fixed 200-feature cap was sized for ~350 rows and threw
-    away most of the vocabulary once more data was available."""
+    """Word + char n-gram TF-IDF; vocabulary caps scale with data size."""
     word_cap = 300 if n_docs < 1000 else 1500
     char_cap = 300 if n_docs < 1000 else 1500
     return FeatureUnion([
@@ -135,14 +118,11 @@ def build_tfidf_features(texts, vectorizer, fit: bool):
 def prepare_modeling_data(df: pd.DataFrame, vectorizer: TfidfVectorizer = None,
                             fit: bool = True, known_areas=None):
     """
-    End-to-end: raw reason_text + area -> full feature DataFrame.
+    reason_text + area (+ plant_type) -> feature DataFrame.
 
-    fit=True  (training): fits a NEW vectorizer, derives known_areas
-              from this data. Returns (X, vectorizer, known_areas).
-    fit=False (inference/eval): reuses the vectorizer AND known_areas
-              passed in -- raises if either is missing, rather than
-              silently fitting fresh ones (that silent-refit was the
-              root cause of an earlier production bug in this project).
+    fit=True:  fits a new vectorizer and derives known_areas.
+    fit=False: requires the training-time vectorizer and known_areas.
+    Returns (X, vectorizer, known_areas).
     """
     df = df.copy()
     df["clean_text"] = df["reason_text"].apply(clean_text)
@@ -164,27 +144,13 @@ def prepare_modeling_data(df: pd.DataFrame, vectorizer: TfidfVectorizer = None,
 
     combined = pd.concat([df, tfidf_df], axis=1)
     X = combined.select_dtypes(include=[np.number])
-    # FIX: 'mins' (delay duration) was silently included as a numeric
-    # feature -- confirmed this causes a real crash (Logistic Regression
-    # rejects NaN, and one row has a missing duration) and is also
-    # conceptually wrong: duration is an OUTCOME of the delay, not a
-    # signal that should predict which device caused it, and it isn't
-    # reliably known before the event is fully resolved anyway.
-    X = X.drop(columns=["mins"], errors="ignore")
-    # Whitelist by prefix: external rows carry extra numeric metadata
-    # (power_lost_pct, n_device_classes_mentioned, ...) that must never
-    # become features -- they are outcomes or labeling artifacts, the
-    # same class of leak as 'mins' above.
+    # Whitelist feature columns: other numeric columns (delay minutes,
+    # power lost, labeling metadata) are outcomes, not predictors.
     keep = [c for c in X.columns
             if c.startswith(FEATURE_PREFIXES) or c in ("text_length", "word_count")]
     return X[keep], vectorizer, known_areas
 
 
-FEATURE_PREFIXES = ("kw_", "area_", "pt_", "tfidf_")
-
-
 def align_features(X: pd.DataFrame, feature_names: list) -> pd.DataFrame:
-    """Reindex to the exact training-time feature set/order, filling
-    any missing column with 0. Call this right before model.predict at
-    inference time."""
+    """Reindex to the training-time feature set/order (missing columns -> 0)."""
     return X.reindex(columns=feature_names, fill_value=0)

@@ -1,10 +1,8 @@
 // Shared config + helpers used by script.js.
 //
-// API_BASE_URL: empty string = same origin. The FastAPI app serves this
-// dashboard itself (see app.py), so on Render -- or any single-server
-// deployment -- no URL needs editing. Only when the page is opened from
-// a separate dev server (e.g. VS Code Live Server on :5500) does it
-// fall back to a local backend on :8000.
+// API_BASE_URL is empty (same origin) because app.py serves this
+// dashboard. A separate dev server (e.g. Live Server on :5500) falls
+// back to a local backend on :8000.
 const API_BASE_URL = (location.port === "5500" || location.protocol === "file:")
   ? "http://127.0.0.1:8000"
   : "";

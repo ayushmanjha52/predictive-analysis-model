@@ -1,13 +1,10 @@
 """
-Per-device monthly volume forecasting -- answers "which devices will
-have the most delay in the next 3-4 months" per your requirement.
+Per-device monthly delay-minute forecasting: which devices are expected
+to cause the most delay over the next N months.
 
-Uses month LABEL column (never re-derived from a date column -- this
-project previously found an entire month's date column silently NaN,
-which would corrupt any date-based grouping). Reports 3-month rolling
-average as the primary number, with a linear trend only when it
-actually meets a reliability bar -- never presented with false
-confidence.
+Groups by the month label column. The primary number is the 3-month
+rolling average; the linear trend is used only when it meets a
+reliability bar (R^2 and number of months).
 """
 import sys
 from pathlib import Path
@@ -26,11 +23,9 @@ logger = logging.getLogger(__name__)
 R2_TRUST_THRESHOLD = 0.5
 MIN_MONTHS_FOR_TREND = 6
 
-# A month only counts as "observed" if the log has at least this many
-# events of ANY kind in it. Below that, the month is treated as not
-# (yet) logged rather than as a genuinely quiet month -- e.g. a couple
-# of /log_event test entries in an otherwise unlogged month must not
-# read as "delay dropped to near zero".
+# A month counts as observed only if the log has at least this many
+# events of any kind; sparser months are treated as not (yet) logged
+# rather than as near-zero delay months.
 MIN_EVENTS_FOR_OBSERVED_MONTH = 10
 
 
@@ -40,10 +35,8 @@ def observed_months(df) -> list:
 
 
 def _monthly_series(df, device=None):
-    """FIX: months where a device had NO delays used to be missing from
-    its series entirely (groupby only yields months with rows), so the
-    rolling average skipped every quiet month and overstated the
-    forecast. Now every observed month is present, filled with 0."""
+    """Monthly delay minutes over every observed month; months with no
+    delays for this device are 0 rather than missing."""
     months = observed_months(df)
     d = df.copy()
     if device:
@@ -110,8 +103,6 @@ def forecast_all_devices(df=None, forecast_months: int = 4) -> dict:
     devices = sorted(df["primary_device"].dropna().unique().tolist())
     results = {d: forecast_next_month(df, device=d, forecast_months=forecast_months) for d in devices}
 
-    # Rank by recommended forecast -- directly answers "which device
-    # will have the most delay in the next N months."
     ranked = sorted(
         [(d, r.get("recommended_forecast", 0)) for d, r in results.items() if "recommended_forecast" in r],
         key=lambda x: -x[1]

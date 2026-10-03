@@ -109,8 +109,6 @@ def test_manifest_reports_holdout_not_just_cv():
 
 # ---------------------------------------------------- multi-site / v3 --
 def test_month_sort_is_chronological_and_open_ended():
-    """Regression: MONTH_ORDER used to be a hardcoded Nov-25..May-26
-    list, so Jun-26+ (e.g. /log_event rows) sorted as 'unknown'."""
     assert config.sort_months(["Jul-26", "Nov-25", "Jan-27", "Apr-26"]) == ["Nov-25", "Apr-26", "Jul-26", "Jan-27"]
 
 
@@ -121,7 +119,6 @@ def test_live_predictions_never_used_as_training_labels():
 
 
 def test_external_rows_never_in_backtest_test_set():
-    """The honest number must come only from hand-tagged home data."""
     from train import get_labeled_data, get_backtest_months
     df = get_labeled_data()
     months = get_backtest_months(df[df["is_home"]])
@@ -175,6 +172,16 @@ def test_api_endpoints_return_valid_json():
     r = client.get("/")
     assert r.status_code == 200 and "<html" in r.text.lower()
     assert client.get("/config.js").status_code == 200
+
+
+def test_runtime_requirements_cover_deployed_model():
+    """Render installs requirements.txt only; the pickled model's library must be in it."""
+    import joblib
+    model = joblib.load(config.MODEL_PATH)
+    package = {"sklearn": "scikit-learn"}.get(type(model).__module__.split(".")[0],
+                                               type(model).__module__.split(".")[0])
+    reqs = (Path(__file__).parent.parent / "requirements.txt").read_text().lower()
+    assert package.lower() in reqs, f"{package} is needed by the deployed model but missing from requirements.txt"
 
 
 if __name__ == "__main__":

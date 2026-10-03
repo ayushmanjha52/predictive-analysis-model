@@ -2,7 +2,8 @@
 #   pip install -r requirements-dev.txt
 -r requirements.txt
 
-# train.py's confusion-matrix output
+# training: optional CatBoost candidate + confusion-matrix plot
+catboost==1.2.10
 matplotlib==3.11.0
 seaborn==0.13.2
 
@@ -13,5 +14,3 @@ openpyxl==3.1.5
 pytest==9.1.1
 httpx
 
-# deploy_hf.py (Hugging Face Spaces deploy)
-huggingface_hub

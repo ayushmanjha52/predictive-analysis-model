@@ -14,3 +14,4 @@ catboost_info/
 # deployed app needs it.
 data/external/nrc_events_raw.csv.gz
 data/external/nrc_days_done.txt
+models/archive/
