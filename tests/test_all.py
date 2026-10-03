@@ -104,6 +104,77 @@ def test_manifest_reports_holdout_not_just_cv():
     assert "holdout_accuracy" in manifest
     assert "cv_accuracy" in manifest
     assert manifest["holdout_accuracy"] is not None
+    assert manifest.get("backtest_accuracy") is not None
+
+
+# ---------------------------------------------------- multi-site / v3 --
+def test_month_sort_is_chronological_and_open_ended():
+    """Regression: MONTH_ORDER used to be a hardcoded Nov-25..May-26
+    list, so Jun-26+ (e.g. /log_event rows) sorted as 'unknown'."""
+    assert config.sort_months(["Jul-26", "Nov-25", "Jan-27", "Apr-26"]) == ["Nov-25", "Apr-26", "Jul-26", "Jan-27"]
+
+
+def test_live_predictions_never_used_as_training_labels():
+    from train import get_labeled_data
+    df = get_labeled_data()
+    assert not (df["tag_source"] == "live_prediction").any()
+
+
+def test_external_rows_never_in_backtest_test_set():
+    """The honest number must come only from hand-tagged home data."""
+    from train import get_labeled_data, get_backtest_months
+    df = get_labeled_data()
+    months = get_backtest_months(df[df["is_home"]])
+    assert months, "no backtest months found"
+    for m in months:
+        test = df[df["is_home"] & (df["month"] == m)]
+        assert (test["site"] == config.HOME_SITE).all()
+
+
+def test_home_predictions_restricted_to_home_classes():
+    predictor = CausePredictor()
+    r = predictor.predict("level transmitter failed low causing feedwater trip")
+    if predictor.home_classes:
+        assert r["predicted_device"] in predictor.home_classes
+        assert all(c["device"] in predictor.home_classes for c in r["top_candidates"] if c["confidence"] > 0)
+
+
+def test_forecast_counts_quiet_months_as_zero():
+    from forecasting import _monthly_series, observed_months
+    df = load_master_events()
+    months = observed_months(df)
+    for dev in df["primary_device"].dropna().unique():
+        s = _monthly_series(df, device=dev)
+        assert s["month"].tolist() == months
+
+
+def test_external_labels_only_single_device_events():
+    if not config.EXTERNAL_EVENTS_PATH.exists():
+        return
+    from data_loader import load_external_events
+    ext = load_external_events()
+    labeled = ext[ext["primary_device"].notna()]
+    assert len(labeled) > 0
+    assert (labeled["n_device_classes_mentioned"] == 1).all()
+
+
+def test_api_endpoints_return_valid_json():
+    from fastapi.testclient import TestClient
+    sys.path.append(str(Path(__file__).parent.parent))
+    from app import app
+    client = TestClient(app)
+    for path in ["/health", "/model_info", "/stats", "/forecast/all_devices", "/review_queue",
+                 "/shadow_stats", "/health_score", "/sites", "/fleet/overview",
+                 "/fleet/device_ranking", "/fleet/lessons", "/fleet/trend", "/fleet/grid",
+                 "/fleet/plant_reliability", "/power_plants", "/power_plants?country=IND",
+                 "/events?site=ALL&limit=5"]:
+        r = client.get(path)
+        assert r.status_code == 200, f"{path} -> {r.status_code}: {r.text[:200]}"
+    r = client.post("/predict", json={"reason_text": "pressure switch fault at cooling bed", "area": "COOLING_BED"})
+    assert r.status_code == 200 and r.json()["predicted_device"]
+    r = client.get("/")
+    assert r.status_code == 200 and "<html" in r.text.lower()
+    assert client.get("/config.js").status_code == 200
 
 
 if __name__ == "__main__":

@@ -1,16 +1,32 @@
 """
-FastAPI backend -- Combi Mill Field-Device Predictive Maintenance.
+FastAPI backend -- Field-Device Predictive Maintenance: Combi Mill +
+power-generation fleet insights.
 
-Endpoints:
-  GET  /health          - liveness + model-loaded check
-  GET  /model_info        - manifest: winning model, honest holdout accuracy, classes
-  POST /predict            - classify new delay text (+ optional area), with expected duration
-  POST /log_event           - classify AND record as a real, timestamped event (real-time)
-  GET  /stats               - area-aware Pareto + FMEA fusion + recommendations
-  GET  /forecast             - per-device 3-4 month volume forecast, ranked
-  GET  /events                - paginated/filterable event log
-  GET  /device_area_breakdown  - device x area cross-tab (the specific
-                                  "which device, in which area" requirement)
+Home site (Combi Mill) endpoints:
+  GET  /health                - liveness + model-loaded check
+  GET  /model_info            - manifest: winning model, honest backtest accuracy, classes
+  POST /predict               - classify delay text (+ optional area, plant_type), with expected duration
+  POST /log_event             - classify AND record as a real, timestamped event
+  GET  /stats                 - area-aware Pareto + FMEA fusion + recommendations
+  GET  /forecast              - per-device volume forecast
+  GET  /forecast/all_devices  - every device, ranked
+  GET  /events                - paginated/filterable event log (site=COMBI_MILL | ALL | <plant name>)
+  GET  /device_area_breakdown - device x area cross-tab
+  GET  /area_risk, /unresolved_hotspots, /review_queue, /health_score
+  POST /shadow_predict, /shadow_resolve; GET /shadow_stats
+
+Fleet-wide (public power-plant data, see src/external_data.py):
+  GET  /sites                  - every site in the dataset, by plant type
+  GET  /fleet/overview         - headline numbers across all US power reactors
+  GET  /fleet/device_ranking   - device classes ranked across the fleet vs. Combi Mill
+  GET  /fleet/failure_modes    - what actually went wrong, mined from narratives
+  GET  /fleet/lessons          - cross-site lessons for the Combi Mill's devices
+  GET  /fleet/trend            - yearly fleet trend
+  GET  /fleet/grid             - grid / offsite-power event insights
+  GET  /fleet/plant_reliability- device events per GW, per plant
+  GET  /power_plants           - global installed base (WRI database), optional ?country=IND
+
+The dashboard (frontend/) is served from the same app at "/".
 
 Run: uvicorn app:app --reload --port 8000
 """
@@ -19,25 +35,34 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent / "src"))
 
 import json
+import uuid
 from datetime import datetime
 from typing import Optional
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 import config
-from data_loader import load_master_events
+import fleet_insights
+from data_loader import load_master_events, load_all_events
 from fmea_risk import load_fmea_scores, fuse_pareto_with_fmea, get_recommendation
 from forecasting import forecast_next_month, forecast_all_devices
 from predict import get_predictor
+from health_score import (_load_events_for_health_score, build_recurrence_features,
+                          compute_simple_health_scores, fit_survival_model,
+                          predict_recurrence_risk, MIN_EVENTS_FOR_SURVIVAL_MODEL)
+
+FRONTEND_DIR = Path(__file__).parent / "frontend"
 
 app = FastAPI(
-    title="Combi Mill Field-Device Predictive Maintenance API",
-    version="2.0.0",
-    description="Classifies delay causes (device + area), forecasts delay volume, "
-                "and fuses empirical data with FMEA risk to support a 50% delay reduction target.",
+    title="Field-Device Predictive Maintenance API -- Combi Mill + Power Fleet",
+    version="3.0.0",
+    description="Classifies delay causes (device + area), forecasts delay volume, fuses empirical "
+                "data with FMEA risk, and benchmarks against public power-plant fleet data "
+                "to support a 50% field-device delay reduction target.",
 )
 
 app.add_middleware(
@@ -75,12 +100,15 @@ class PredictRequest(BaseModel):
     reason_text: str = Field(..., min_length=3, max_length=2000)
     area: Optional[str] = Field(None, description="e.g. BDM, SAW, COOLING_BED")
     mins: Optional[float] = Field(None, ge=0)
+    plant_type: Optional[str] = Field(None, description="Defaults to the Combi Mill (STEEL_ROLLING_MILL). "
+                                                         "e.g. NUCLEAR_POWER for a power-plant delay.")
 
 
 # --------------------------------------------------------------- Endpoints --
-@app.get("/")
-def root():
-    return {"message": "Combi Mill Predictive Maintenance API", "docs": "/docs", "health": "/health"}
+@app.get("/api")
+def api_root():
+    return {"message": "Field-Device Predictive Maintenance API", "docs": "/docs", "health": "/health",
+            "dashboard": "/"}
 
 
 @app.get("/area_risk")
@@ -116,25 +144,18 @@ def unresolved_hotspots(top_n: int = Query(5, ge=1, le=20)):
 def review_queue(limit: int = Query(50, ge=1, le=500)):
     """Individual unresolved delay events, ranked by minutes (highest
     impact first) -- a queue for a human to review and manually tag.
-    Only ~1-2% of unresolved delays were found to contain a safely
-    auto-taggable device signal (verified against this project's own
-    historical tagging -- see chat history for the analysis); the rest
-    genuinely need human judgment, so this endpoint prioritizes a
-    reviewer's time rather than attempting to guess.
 
     FIX: confirmed via production traceback that 9 rows have NaN date
     and 2 rows have NaN reason_text among unresolved delays -- NaN is
-    not valid JSON (same class of bug found earlier in fmea_risk.py).
-    The previous fillna() only covered 'area', missing these two
-    columns entirely, which crashed every real call with
-    ValueError: Out of range float values are not JSON compliant: nan.
+    not valid JSON. fillna() covers every returned column.
     """
     df = get_events()
     unresolved = df[df["primary_device"].isna()].copy()
     unresolved = unresolved.sort_values("mins", ascending=False).head(limit)
     records = unresolved[["date", "month", "mins", "reason_text", "area"]].fillna(
         {"area": "UNKNOWN", "date": "", "month": "", "reason_text": "(no description)"}
-    ).to_dict(orient="records")
+    )
+    records = records.astype(object).where(records.notna(), None).to_dict(orient="records")
     return {
         "total_unresolved": int(df["primary_device"].isna().sum()),
         "total_unresolved_minutes": float(df[df["primary_device"].isna()]["mins"].sum()),
@@ -145,7 +166,8 @@ def review_queue(limit: int = Query(50, ge=1, le=500)):
 @app.get("/health")
 def health():
     model_ready = config.MODEL_PATH.exists() and config.VECTORIZER_PATH.exists()
-    return {"status": "ok", "model_ready": model_ready}
+    return {"status": "ok", "model_ready": model_ready,
+            "external_data": config.EXTERNAL_EVENTS_PATH.exists()}
 
 
 @app.get("/model_info")
@@ -160,7 +182,7 @@ def model_info():
 def predict(req: PredictRequest):
     predictor = get_predictor_safe()
     try:
-        result = predictor.predict(req.reason_text, area=req.area)
+        result = predictor.predict(req.reason_text, area=req.area, plant_type=req.plant_type)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
     result["recommendation"] = get_recommendation(result["predicted_device"])
@@ -171,7 +193,11 @@ def predict(req: PredictRequest):
 def log_event(req: PredictRequest):
     """Classify AND record as a real event with a server timestamp --
     appends to master_events.csv and invalidates the cache so /stats,
-    /forecast, and /events reflect it on the very next call."""
+    /forecast, and /events reflect it on the very next call.
+
+    NOTE: rows written here are tagged tag_source='live_prediction' and
+    are deliberately EXCLUDED from training (their label is the model's
+    own guess, not a human's)."""
     predictor = get_predictor_safe()
     now = datetime.now()
     result = predictor.predict(req.reason_text, area=req.area)
@@ -206,9 +232,7 @@ def log_event(req: PredictRequest):
 # actual diagnosis for the SAME real delay, so agreement rate can be
 # measured before this system drives unsupervised maintenance decisions.
 # Two-step, deliberately: the prediction is logged blind (shadow_predict),
-# then the reviewer's real finding is recorded separately (shadow_resolve)
-# -- the reviewer should determine the actual cause independently, not by
-# reading the model's guess first, or the comparison means nothing.
+# then the reviewer's real finding is recorded separately (shadow_resolve).
 
 class ShadowPredictRequest(BaseModel):
     reason_text: str = Field(..., min_length=3, max_length=2000)
@@ -222,26 +246,31 @@ class ShadowResolveRequest(BaseModel):
     reviewer_note: Optional[str] = Field(None, max_length=1000)
 
 
+SHADOW_COLUMNS = ["shadow_id", "logged_at", "reason_text", "area", "mins",
+                  "predicted_device", "confidence", "actual_device",
+                  "resolved_at", "reviewer_note", "agreement"]
+
+
 def _load_shadow_log() -> pd.DataFrame:
-    cols = ["shadow_id", "logged_at", "reason_text", "area", "mins",
-            "predicted_device", "confidence", "actual_device",
-            "resolved_at", "reviewer_note", "agreement"]
     if not config.SHADOW_LOG_PATH.exists():
-        return pd.DataFrame(columns=cols)
-    return pd.read_csv(config.SHADOW_LOG_PATH)
+        return pd.DataFrame(columns=SHADOW_COLUMNS)
+    return pd.read_csv(config.SHADOW_LOG_PATH, dtype={"shadow_id": str})
+
+
+def _is_resolved(log: pd.DataFrame) -> pd.Series:
+    """FIX: the old check was `log['resolved_at'] != ''`, but pandas
+    reads empty CSV cells back as NaN, and NaN != '' is True -- so every
+    PENDING entry was counted as resolved (and as a disagreement)."""
+    return log["resolved_at"].notna() & (log["resolved_at"].astype(str).str.strip() != "")
 
 
 @app.post("/shadow_predict")
 def shadow_predict(req: ShadowPredictRequest):
     """Step 1: log the model's prediction for a real delay, without
-    revealing it to the reviewer yet. Returns a shadow_id -- the
-    reviewer independently determines the actual cause through normal
-    means, then submits it via /shadow_resolve using this id."""
+    revealing it to the reviewer yet."""
     predictor = get_predictor_safe()
     now = datetime.now()
     result = predictor.predict(req.reason_text, area=req.area)
-
-    import uuid
     shadow_id = str(uuid.uuid4())[:8]
 
     new_row = {
@@ -258,9 +287,7 @@ def shadow_predict(req: ShadowPredictRequest):
     log = pd.concat([log, pd.DataFrame([new_row])], ignore_index=True)
     log.to_csv(config.SHADOW_LOG_PATH, index=False)
 
-    # Deliberately does NOT return the prediction in this response --
-    # the point of shadow mode is the reviewer's diagnosis stays
-    # independent of the model's guess until both are recorded.
+    # Deliberately does NOT return the prediction in this response.
     return {"shadow_id": shadow_id, "logged": True,
             "message": "Prediction recorded. Determine the actual cause independently, then submit via /shadow_resolve."}
 
@@ -270,7 +297,7 @@ def shadow_resolve(req: ShadowResolveRequest):
     """Step 2: record the reviewer's independent actual diagnosis and
     compute whether it agreed with the model's (now-revealed) prediction."""
     log = _load_shadow_log()
-    match = log["shadow_id"] == req.shadow_id
+    match = log["shadow_id"].astype(str) == req.shadow_id
     if not match.any():
         raise HTTPException(status_code=404, detail=f"No shadow entry found for id '{req.shadow_id}'.")
 
@@ -280,13 +307,8 @@ def shadow_resolve(req: ShadowResolveRequest):
     actual = req.actual_device.upper().strip()
     agreement = predicted == actual
 
-    # FIX: confirmed by actually running this end-to-end (not just code
-    # review) -- writing a string into a column that started as all
-    # empty strings/NaN raises pandas.errors.LossySetitemError /
-    # TypeError, because pandas infers an incompatible dtype (often
-    # float64) for a column with no non-null values yet on first
-    # write/read-back from CSV. Casting the whole column to object
-    # dtype before assignment avoids this.
+    # Writing a string into a column pandas inferred as float64 (all
+    # empty) raises LossySetitemError -- cast to object first.
     for col in ("actual_device", "resolved_at", "reviewer_note", "agreement"):
         log[col] = log[col].astype(object)
 
@@ -309,15 +331,14 @@ def shadow_resolve(req: ShadowResolveRequest):
 def shadow_stats():
     """Running agreement rate across all resolved shadow-mode entries --
     the core metric for deciding whether this system is ready to drive
-    unsupervised decisions. Returns per-device breakdown too, since
-    overall accuracy can hide a weak class (Encoder has been the
-    consistently weakest class across every model tried in this
-    project)."""
+    unsupervised decisions."""
     log = _load_shadow_log()
-    resolved = log[log["resolved_at"] != ""].copy()
+    resolved_mask = _is_resolved(log)
+    resolved = log[resolved_mask].copy()
     if len(resolved) == 0:
-        return {"total_resolved": 0, "overall_agreement_rate": None,
-                "by_device": [], "message": "No resolved shadow entries yet."}
+        return {"total_resolved": 0, "total_pending": int((~resolved_mask).sum()),
+                "overall_agreement_rate": None, "by_device": [],
+                "message": "No resolved shadow entries yet."}
 
     resolved["agreement"] = resolved["agreement"].astype(str).str.lower() == "true"
     overall_rate = round(resolved["agreement"].mean() * 100, 1)
@@ -329,7 +350,7 @@ def shadow_stats():
 
     return {
         "total_resolved": int(len(resolved)),
-        "total_pending": int((log["resolved_at"] == "").sum()),
+        "total_pending": int((~resolved_mask).sum()),
         "overall_agreement_rate": overall_rate,
         "by_device": by_device.to_dict(orient="records"),
     }
@@ -340,14 +361,9 @@ def stats():
     df = get_events()
     tagged = df[df["primary_device"].notna()]
 
-    # FIX: RFID, TT, HIP (each n=1 in the current dataset) were still
-    # counted in the Pareto/severity ranking despite being dropped from
-    # classifier training (too few examples per config.MIN_CLASS_COUNT).
-    # A single event's avg_minutes is not a meaningful "severity" signal
-    # and could win Top Contributor (Severity) purely by chance on one
-    # data point. Split into "reliable" (>= MIN_CLASS_COUNT samples,
-    # shown in the main Pareto/severity ranking) vs "low_sample" (shown
-    # separately, flagged, never used for Top Contributor rankings).
+    # Devices below MIN_CLASS_COUNT are shown separately ("low_sample")
+    # and never used for Top Contributor rankings -- one event's average
+    # is not a meaningful severity signal.
     device_counts = tagged["primary_device"].value_counts()
     reliable_devices = device_counts[device_counts >= config.MIN_CLASS_COUNT].index
     low_sample_devices = device_counts[device_counts < config.MIN_CLASS_COUNT].index
@@ -386,6 +402,7 @@ def stats():
     top_severity_row = pareto.sort_values("avg_minutes", ascending=False).iloc[0] if len(pareto) else None
 
     return {
+        "site": config.HOME_SITE,
         "total_field_device_delay_minutes": float(tagged_reliable["mins"].sum()),
         "total_tagged_events": int(tagged_events),
         "total_events": int(total_events),
@@ -398,7 +415,7 @@ def stats():
         "top_contributor_severity": {
             "device": top_severity_row["device"], "avg_minutes": float(top_severity_row["avg_minutes"]),
         } if top_severity_row is not None else None,
-        "months_covered": sorted(df["month"].dropna().unique().tolist(), key=config.month_sort_key),
+        "months_covered": config.sort_months(df["month"].dropna().unique()),
         "pareto_by_device": fused.to_dict(orient="records"),
         "pareto_low_sample_devices": fused_low.to_dict(orient="records") if len(fused_low) else [],
     }
@@ -439,30 +456,136 @@ def events(
     area: Optional[str] = Query(None),
     month: Optional[str] = Query(None),
     search: Optional[str] = Query(None),
+    site: str = Query(config.HOME_SITE, description="COMBI_MILL (default), ALL, or a plant name"),
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
 ):
-    df = get_events().copy()
+    site = site.upper()
+    if site == config.HOME_SITE:
+        df = get_events().copy()
+    else:
+        df = load_all_events()
+        if site != "ALL":
+            df = df[df["site"].astype(str).str.upper() == site]
     if device:
         df = df[df["primary_device"] == device.upper()]
     if area:
-        df = df[df["area"].str.upper() == area.upper()]
+        df = df[df["area"].astype(str).str.upper() == area.upper()]
     if month:
         df = df[df["month"] == month]
     if search:
         df = df[df["reason_text"].str.contains(search, case=False, na=False)]
 
     total = len(df)
-    df = df.sort_values("date", ascending=False, na_position="last")
+    df = df.assign(_d=pd.to_datetime(df["date"], errors="coerce")) \
+        .sort_values("_d", ascending=False, na_position="last")
     page = df.iloc[offset: offset + limit]
 
-    records = page[["date", "month", "mins", "reason_text", "primary_device", "area"]].rename(
-        columns={"primary_device": "device"}
-    ).fillna({"device": "UNRESOLVED", "area": "UNKNOWN"}).to_dict(orient="records")
-
-    return {"total": total, "limit": limit, "offset": offset, "events": records}
+    records = page[["date", "month", "mins", "reason_text", "primary_device", "area", "site", "plant_type"]] \
+        .rename(columns={"primary_device": "device"}) \
+        .fillna({"device": "UNRESOLVED", "area": "UNKNOWN"})
+    records["date"] = records["date"].astype(str)
+    records = records.astype(object).where(records.notna(), None).to_dict(orient="records")
+    return {"total": total, "limit": limit, "offset": offset, "site": site, "events": records}
 
 
 @app.get("/devices")
 def devices():
     return {"target_devices": config.TARGET_DEVICES}
+
+
+@app.get("/health_score")
+def health_score(top_n: int = Query(10, ge=1, le=50)):
+    """Device x area recurrence risk ranking. Always returns the simple,
+    explainable health score. Also attempts the Cox survival model if
+    lifelines is installed and there's enough data -- if not, this is
+    disclosed explicitly rather than silently omitted."""
+    df = _load_events_for_health_score()
+    df = build_recurrence_features(df)
+
+    scores = compute_simple_health_scores(df)
+    top = scores.head(top_n)
+
+    survival_available = len(df) >= MIN_EVENTS_FOR_SURVIVAL_MODEL
+    cph = fit_survival_model(df) if survival_available else None
+
+    records = []
+    for _, row in top.iterrows():
+        rec = {
+            "device": row["primary_device"],
+            "area": row["area"],
+            "health_score": float(row["health_score"]),
+            "days_since_last_event": int(row["days_since_last_event_asof_cutoff"]),
+            "events_last_90d": int(row["event_count_90d"]),
+            "total_events": int(row["total_events"]),
+            "low_sample_warning": bool(row["low_sample_warning"]),
+        }
+        if cph is not None:
+            risk = predict_recurrence_risk(
+                cph, row["primary_device"], row["area"],
+                days_since_last=0, event_count_90d=row["event_count_90d"], horizon_days=14
+            )
+            rec["survival_model_14d_recurrence_pct"] = risk.get("recurrence_probability_pct")
+        records.append(rec)
+
+    return {
+        "top_at_risk": records,
+        "survival_model_available": cph is not None,
+        "note": None if cph is not None else (
+            "Survival model not available -- either lifelines is not installed, or there isn't "
+            f"enough data yet (need >= {MIN_EVENTS_FOR_SURVIVAL_MODEL} events). "
+            "The health_score ranking above is unaffected and remains valid."
+        ),
+    }
+
+
+# ------------------------------------------------- Fleet-wide insights --
+@app.get("/sites")
+def sites():
+    return fleet_insights.sites_summary()
+
+
+@app.get("/fleet/overview")
+def fleet_overview():
+    return fleet_insights.fleet_overview()
+
+
+@app.get("/fleet/device_ranking")
+def fleet_device_ranking():
+    return fleet_insights.device_ranking()
+
+
+@app.get("/fleet/failure_modes")
+def fleet_failure_modes(device: Optional[str] = Query(None)):
+    return fleet_insights.failure_modes(device)
+
+
+@app.get("/fleet/lessons")
+def fleet_lessons():
+    return fleet_insights.cross_site_lessons()
+
+
+@app.get("/fleet/trend")
+def fleet_trend(top_n_devices: int = Query(6, ge=1, le=16)):
+    return fleet_insights.yearly_trend(top_n_devices)
+
+
+@app.get("/fleet/grid")
+def fleet_grid(top_n: int = Query(10, ge=1, le=50)):
+    return fleet_insights.grid_insights(top_n)
+
+
+@app.get("/fleet/plant_reliability")
+def fleet_plant_reliability(top_n: int = Query(15, ge=1, le=100)):
+    return fleet_insights.plant_reliability(top_n)
+
+
+@app.get("/power_plants")
+def power_plants(country: Optional[str] = Query(None, description="ISO3 code, e.g. IND, USA"),
+                 top_n: int = Query(10, ge=1, le=50)):
+    return fleet_insights.power_plants_summary(country, top_n)
+
+
+# Dashboard -- mounted LAST so every API route above takes precedence.
+if FRONTEND_DIR.exists():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

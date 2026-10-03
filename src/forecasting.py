@@ -26,17 +26,33 @@ logger = logging.getLogger(__name__)
 R2_TRUST_THRESHOLD = 0.5
 MIN_MONTHS_FOR_TREND = 6
 
+# A month only counts as "observed" if the log has at least this many
+# events of ANY kind in it. Below that, the month is treated as not
+# (yet) logged rather than as a genuinely quiet month -- e.g. a couple
+# of /log_event test entries in an otherwise unlogged month must not
+# read as "delay dropped to near zero".
+MIN_EVENTS_FOR_OBSERVED_MONTH = 10
+
+
+def observed_months(df) -> list:
+    counts = df.groupby("month").size()
+    return config.sort_months(counts[counts >= MIN_EVENTS_FOR_OBSERVED_MONTH].index)
+
 
 def _monthly_series(df, device=None):
+    """FIX: months where a device had NO delays used to be missing from
+    its series entirely (groupby only yields months with rows), so the
+    rolling average skipped every quiet month and overstated the
+    forecast. Now every observed month is present, filled with 0."""
+    months = observed_months(df)
     d = df.copy()
     if device:
         d = d[d["primary_device"] == device.upper()]
     else:
         d = d[d["primary_device"].notna()]
     d["mins"] = pd.to_numeric(d["mins"], errors="coerce")
-    monthly = d.groupby("month")["mins"].sum().reset_index(name="mins")
-    monthly["month"] = pd.Categorical(monthly["month"], categories=config.MONTH_ORDER, ordered=True)
-    monthly = monthly.sort_values("month").dropna(subset=["month"]).reset_index(drop=True)
+    sums = d.groupby("month")["mins"].sum()
+    monthly = pd.DataFrame({"month": months, "mins": [float(sums.get(m, 0.0)) for m in months]})
     return monthly
 
 
@@ -45,7 +61,7 @@ def forecast_next_month(df=None, device: Optional[str] = None, forecast_months: 
         df = load_master_events()
 
     monthly = _monthly_series(df, device=device)
-    if len(monthly) == 0:
+    if len(monthly) == 0 or monthly["mins"].sum() == 0:
         return {"device": device, "message": "No data available for this device."}
     if len(monthly) < 3:
         return {

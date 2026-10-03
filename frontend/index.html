@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Combi Mill / Field Device Reliability</title>
+<title>Field Device Reliability</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
@@ -12,12 +12,19 @@
 <header class="topbar">
   <div>
     <p class="brand-eyebrow"><span class="dot"></span> LIVE &middot; DELAY LOG PIPELINE</p>
-    <h1 class="brand-title">COMBI MILL <span class="slash">/</span> FIELD DEVICE RELIABILITY</h1>
-    <p class="brand-sub" id="brandSub">Tata Steel — Breakdown Mill<span class="sep">&middot;</span>Real-Time Reliability Monitoring</p>
+    <h1 class="brand-title">FIELD DEVICE RELIABILITY <span class="slash">/</span> MILL + POWER FLEET</h1>
+    <p class="brand-sub" id="brandSub">Tata Steel Combi Mill<span class="sep">&middot;</span>benchmarked against every US power reactor and 35,000 power plants worldwide</p>
   </div>
 </header>
 
+<nav class="tabs" role="tablist">
+  <button class="tab-btn active" data-tab="tab-mill" role="tab">Combi Mill</button>
+  <button class="tab-btn" data-tab="tab-fleet" role="tab">Power Fleet Insights</button>
+  <button class="tab-btn" data-tab="tab-plants" role="tab">Global Power Plants</button>
+</nav>
+
 <main class="page">
+<div class="tab-pane active" id="tab-mill">
 
   <!-- KPI cards -->
   <section class="kpi-grid">
@@ -178,6 +185,27 @@
     </div>
   </section>
 
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Device Health Score — Recurrence Risk</h2>
+      <span class="panel-note">Which device + area combinations are most likely to fail again soon</span>
+    </div>
+    <div id="healthScoreNote" class="alert info mb-12" hidden>
+      <p class="alert-body" id="healthScoreNoteText"></p>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead>
+          <tr>
+            <th>Device</th><th>Area</th><th>Health Score</th>
+            <th>Days Since Last Event</th><th>Events (Last 90d)</th>
+            <th>Total Events</th><th>14-Day Recurrence % (if available)</th>
+          </tr>
+        </thead>
+        <tbody id="healthScoreBody"><tr><td colspan="7" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
   <!-- Device x Area breakdown -- the specific "which device, which area" requirement -->
   <section class="panel">
     <div class="panel-head">
@@ -221,6 +249,159 @@
       </table>
     </div>
   </section>
+</div>
+
+<!-- ============================ POWER FLEET ============================ -->
+<div class="tab-pane" id="tab-fleet">
+  <p class="section-intro">
+    The same field devices that delay the Combi Mill also fail across the power-generation fleet.
+    This tab mines <b>every US NRC power-reactor event report</b> (public, plant-written narratives)
+    for which field devices failed, <b>what actually went wrong</b>, and how often it tripped the unit.
+    These insights are used both here and as extra training data for the delay classifier.
+  </p>
+
+  <section class="kpi-grid">
+    <div class="kpi-card c-accent">
+      <p class="kpi-label">Fleet Events Analysed</p>
+      <p class="kpi-value" id="fleetKpiEvents">—</p>
+      <p class="kpi-foot" id="fleetKpiEventsFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card c-gold">
+      <p class="kpi-label">Field-Device Failures</p>
+      <p class="kpi-value" id="fleetKpiDevice">—</p>
+      <p class="kpi-foot" id="fleetKpiDeviceFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card c-blue">
+      <p class="kpi-label">Power Plants Covered</p>
+      <p class="kpi-value" id="fleetKpiPlants">—</p>
+      <p class="kpi-foot" id="fleetKpiPlantsFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card c-teal">
+      <p class="kpi-label">Grid / Offsite-Power Events</p>
+      <p class="kpi-value" id="fleetKpiGrid">—</p>
+      <p class="kpi-foot" id="fleetKpiGridFoot">&nbsp;</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Cross-Site Lessons for the Combi Mill</h2>
+      <span class="panel-note">Devices tracked at the mill that also fail in power plants: real failure modes &amp; what to check first</span>
+    </div>
+    <div class="lesson-grid" id="lessonGrid"><p class="text-dim">Loading…</p></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Device Ranking — Combi Mill vs. Power Fleet</h2>
+      <span class="panel-note">Trip rate = share of fleet failures that tripped the reactor/turbine (objective severity)</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Device</th><th>Fleet Events</th><th>Plants Affected</th><th>Trip Rate</th><th>Avg Power Lost</th><th>Mill Events</th><th>Mill Minutes</th></tr></thead>
+        <tbody id="fleetRankBody"><tr><td colspan="7" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="source-note" id="fleetLabelNote"></p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Fleet Trend by Year</h2>
+      <span class="panel-note">Reported events, unit trips and grid events per year across all US power reactors</span>
+    </div>
+    <canvas id="fleetTrendChart" height="110"></canvas>
+    <p class="source-note" id="fleetTrendNote"></p>
+  </section>
+
+  <div class="two-col">
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Power Grid / Offsite-Power Events</h2>
+        <span class="panel-note" id="gridNote">What causes grid-related events at power plants</span>
+      </div>
+      <div id="gridCauseBars"></div>
+      <p class="source-note" id="gridFootnote"></p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Plants Most Affected by Grid Events</h2>
+        <span class="panel-note">Count of grid / offsite-power events</span>
+      </div>
+      <div class="scroll-x">
+        <table class="sev-table">
+          <thead><tr><th>Plant</th><th>State</th><th>Events</th><th>Trips</th></tr></thead>
+          <tbody id="gridPlantsBody"><tr><td colspan="4" class="text-dim">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Plants with the Most Unit Trips (normalized per GW)</h2>
+      <span class="panel-note">Reactor/turbine trips per GW of installed capacity, so large sites aren't ranked worst just for being large</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Plant</th><th>State</th><th>Capacity</th><th>Events</th><th>Trips</th><th>Trips / GW</th></tr></thead>
+        <tbody id="plantRelBody"><tr><td colspan="6" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="source-note" id="plantRelNote"></p>
+  </section>
+</div>
+
+<!-- ========================== GLOBAL PLANTS =========================== -->
+<div class="tab-pane" id="tab-plants">
+  <p class="section-intro">
+    The global installed base of power generation, from the <b>WRI Global Power Plant Database</b>
+    (about 35,000 plants in 167 countries). It shows where the field-device population lives, by fuel and country.
+  </p>
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title" id="plantsTitle">Installed Capacity by Fuel</h2>
+      <select id="countrySelect" class="select-inline" aria-label="Country">
+        <option value="">World</option>
+        <option value="IND">India</option>
+        <option value="USA">United States</option>
+        <option value="CHN">China</option>
+        <option value="JPN">Japan</option>
+        <option value="DEU">Germany</option>
+        <option value="GBR">United Kingdom</option>
+        <option value="FRA">France</option>
+        <option value="BRA">Brazil</option>
+        <option value="RUS">Russia</option>
+        <option value="AUS">Australia</option>
+      </select>
+    </div>
+    <section class="kpi-grid">
+      <div class="kpi-card c-blue"><p class="kpi-label">Plants</p><p class="kpi-value" id="plantsKpiCount">—</p></div>
+      <div class="kpi-card c-gold"><p class="kpi-label">Capacity</p><p class="kpi-value" id="plantsKpiGw">—</p></div>
+      <div class="kpi-card c-teal"><p class="kpi-label">Largest Fuel</p><p class="kpi-value small" id="plantsKpiFuel">—</p></div>
+      <div class="kpi-card c-accent"><p class="kpi-label">Fuel Types</p><p class="kpi-value" id="plantsKpiFuels">—</p></div>
+    </section>
+    <div id="fuelBars"></div>
+  </section>
+
+  <div class="two-col">
+    <section class="panel">
+      <div class="panel-head"><h2 class="panel-title">Largest Plants</h2></div>
+      <div class="scroll-x">
+        <table class="sev-table">
+          <thead><tr><th>Plant</th><th>Country</th><th>Fuel</th><th>MW</th></tr></thead>
+          <tbody id="largestPlantsBody"><tr><td colspan="4" class="text-dim">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="panel" id="topCountriesPanel">
+      <div class="panel-head"><h2 class="panel-title">Top Countries by Capacity</h2></div>
+      <div id="countryBars"></div>
+    </section>
+  </div>
+  <p class="source-note">Source: World Resources Institute, Global Power Plant Database v1.3 (CC BY 4.0). Capacity is nameplate MW.</p>
+</div>
 
 </main>
 

@@ -207,3 +207,25 @@ input#minsInput:focus, select#areaInput:focus { border-color: var(--gold); }
   border-radius: var(--radius-sm); padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
 }
 #shadowMinsInput:focus, #shadowAreaInput:focus, #shadowActualSelect:focus { border-color: var(--gold); }
+/* ---- Site tabs: Combi Mill / Power Fleet / Global Plants ---- */
+.tabs { display: flex; gap: 6px; padding: 0 clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--border-soft); overflow-x: auto; }
+.tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-muted); padding: 12px 14px; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+.section-intro { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin: 0 0 18px; max-width: 900px; }
+.section-intro b { color: var(--text); }
+
+/* Fleet lesson cards */
+.lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.lesson-card { background: var(--card-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+.lesson-card h3 { margin: 0 0 6px; font-family: 'Space Grotesk', sans-serif; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.lesson-stats { color: var(--text-muted); font-size: 12px; margin: 0 0 10px; font-family: 'JetBrains Mono', monospace; }
+.mode-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.mode-chip { background: var(--gold-soft); color: var(--gold); font-size: 10.5px; padding: 3px 8px; border-radius: 999px; font-family: 'JetBrains Mono', monospace; }
+.lesson-card ul { margin: 0; padding-left: 18px; color: var(--text); font-size: 12.5px; line-height: 1.55; }
+.select-inline { background: var(--bg-raised); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; }
+.source-note { color: var(--text-dim); font-size: 11.5px; margin-top: 10px; line-height: 1.5; }
+.source-note a { color: var(--blue); }
+@media (max-width: 520px) { .lesson-grid { grid-template-columns: 1fr; } }

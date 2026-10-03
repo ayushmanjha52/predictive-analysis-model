@@ -1,0 +1,19 @@
+# Render Blueprint -- deploys the API + dashboard as ONE web service.
+# In the Render dashboard: New -> Blueprint -> select this repo.
+# The dashboard is served by the same app at "/", so no API URL or CORS
+# configuration is needed.
+services:
+  - type: web
+    name: field-device-pdm
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.1
+      # Only needed if a frontend on a DIFFERENT origin calls this API.
+      # - key: PDM_CORS_ORIGINS
+      #   value: https://your-other-frontend.example.com

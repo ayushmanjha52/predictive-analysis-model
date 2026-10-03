@@ -5,23 +5,52 @@ single fix that prevents the recurring 'two files disagree about X'
 class of bug found repeatedly earlier in this project.
 """
 import os
+from datetime import datetime
 from pathlib import Path
 
 # Resolved relative to this file, not hardcoded to one machine's path --
 # works regardless of where the project folder is cloned/moved to.
 PROJECT_ROOT = Path(os.environ.get("PDM_ROOT", Path(__file__).resolve().parent.parent))
 
-DATA_DIR = PROJECT_ROOT / "data"
+REPO_DATA_DIR = PROJECT_ROOT / "data"
+# PDM_DATA_DIR: put the WRITABLE data (event log, shadow log) somewhere
+# persistent, e.g. a Render disk. On first start the directory is seeded
+# from the repo's data/ folder, then left alone so logged events survive
+# redeploys. Unset = use the repo's data/ folder (local dev).
+DATA_DIR = Path(os.environ.get("PDM_DATA_DIR", REPO_DATA_DIR))
+EXTERNAL_DIR = DATA_DIR / "external"
 MODELS_DIR = PROJECT_ROOT / "models"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 
-for _d in (DATA_DIR, MODELS_DIR, REPORTS_DIR):
+for _d in (DATA_DIR, EXTERNAL_DIR, MODELS_DIR, REPORTS_DIR):
     _d.mkdir(parents=True, exist_ok=True)
+
+if DATA_DIR.resolve() != REPO_DATA_DIR.resolve() and REPO_DATA_DIR.exists():
+    import shutil
+    for _src in REPO_DATA_DIR.rglob("*"):
+        _dst = DATA_DIR / _src.relative_to(REPO_DATA_DIR)
+        if _src.is_file() and (not _dst.exists() or _dst.parent.name == "external"):
+            # external/ is public reference data shipped with each deploy
+            # -- always refreshed; everything else is seeded only once.
+            _dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(_src, _dst)
 
 RAW_DELAYS_PATH = DATA_DIR / "raw_delays.xlsx"
 LEGACY_MASTER_PATH = DATA_DIR / "legacy_master_events.csv"
 MASTER_EVENTS_PATH = DATA_DIR / "master_events.csv"
 FMEA_SCORES_PATH = DATA_DIR / "fmea_risk_scores.csv"
+
+# Public power-sector data (see src/external_data.py). Kept in a
+# separate file from master_events.csv: master_events.csv is the
+# Combi Mill's own hand-tagged log (and what /log_event appends to);
+# external events are weakly-labeled public data and are never used to
+# measure accuracy.
+EXTERNAL_EVENTS_PATH = EXTERNAL_DIR / "external_events.csv.gz"
+WRI_PLANTS_PATH = EXTERNAL_DIR / "global_power_plants.csv.gz"
+
+# The site whose own hand-tagged data is the honest holdout benchmark.
+HOME_SITE = "COMBI_MILL"
+HOME_PLANT_TYPE = "STEEL_ROLLING_MILL"
 
 MODEL_PATH = MODELS_DIR / "cause_classifier_model.pkl"
 VECTORIZER_PATH = MODELS_DIR / "tfidf_vectorizer.pkl"
@@ -48,16 +77,27 @@ MIN_CLASS_COUNT = 5
 CONFIDENCE_THRESHOLD = 0.35
 
 # Chronological order -- month label strings like "Nov-25" sort WRONG
-# alphabetically ("Apr-26" < "Dec-25"). Always order via this list,
-# never via .sort_values() on the raw string.
-MONTH_ORDER = ["Nov-25", "Dec-25", "Jan-26", "Feb-26", "Mar-26", "Apr-26", "May-26"]
+# alphabetically ("Apr-26" < "Dec-25"). Always order via
+# month_sort_key(), never via .sort_values() on the raw string.
+#
+# FIX: this used to be a hardcoded list (Nov-25..May-26). Any month
+# outside it -- including every event /log_event writes from Jun-26
+# onward -- sorted as "unknown" and was silently DROPPED from the
+# forecast series. Months are now parsed, so the order never goes stale.
+MONTH_ORDER = ["Nov-25", "Dec-25", "Jan-26", "Feb-26", "Mar-26", "Apr-26", "May-26"]  # kept for reference only
 
 
-def month_sort_key(month_label: str) -> int:
+def month_sort_key(month_label) -> int:
+    """'Nov-25' -> 202511. Unparseable labels sort last, never crash."""
     try:
-        return MONTH_ORDER.index(month_label)
+        d = datetime.strptime(str(month_label), "%b-%y")
+        return d.year * 100 + d.month
     except ValueError:
-        return len(MONTH_ORDER)  # unknown months sort last, not crash
+        return 999999
+
+
+def sort_months(labels) -> list:
+    return sorted({m for m in labels if isinstance(m, str)}, key=month_sort_key)
 
 
 # The canonical set of field devices this project tracks for headline

@@ -1,80 +1,75 @@
-# Combi Mill Field-Device Predictive Maintenance
+# Field-Device Predictive Maintenance: Combi Mill + Power Fleet
 
 Supports the FY27 target: Reliability Enhancement of field devices by
 reduction of delays by 50% in FY27 over FY26.
 
+The dashboard has three tabs:
+- **Combi Mill**: the mill's own delay log. It shows device Pareto, area
+  red zones, a 6-month forecast, recurrence health scores, FMEA fusion,
+  the review queue, and shadow-mode validation.
+- **Power Fleet Insights**: every reportable event at US power reactors
+  (public NRC Event Notification Reports, 2012 onward). It shows which
+  field devices fail, the real failure modes mined from plant-written
+  narratives, trip rates, grid/offsite-power events, plants ranked by
+  trips per GW, and cross-site lessons for the mill's own devices.
+- **Global Power Plants**: the installed base of about 35,000 plants
+  worldwide (WRI Global Power Plant Database), by fuel and country.
+
 ## Documentation map
-- **This file** -- setup and day-to-day commands
-- **DEPLOYMENT.md** -- production server setup (CORS, firewall, NSSM/systemd)
-- **MODEL_CARD.md** -- current model, real accuracy numbers, known limitations
-- **LOGGING_GUIDE.md** -- how to log delays so more auto-tag correctly
+- **This file**: setup and day-to-day commands
+- **DEPLOYMENT.md**: Render deployment (and plant-server alternative)
+- **MODEL_CARD.md**: current model, honest accuracy, what helped and what didn't
 
 ## Setup
 ```
-pip install -r requirements.txt
+pip install -r requirements-dev.txt    # requirements.txt = runtime only (what Render installs)
 ```
 
-## Rebuild data from scratch (if you get new raw files)
+## Data
 ```
-python src/ingest.py
+python src/ingest.py          # rebuild data/master_events.csv from raw mill files
+python src/external_data.py   # fetch/refresh public NRC + WRI power-plant data (resumable)
+python src/external_data.py --relabel   # re-run device/failure-mode tagging on cached NRC data
 ```
-Reconciles data/raw_delays.xlsx (primary) with data/legacy_master_events.csv
-(supplementary rows only, deduplicated by reason text) into data/master_events.csv.
+nrc.gov rate-limits bursts. The fetcher is polite (default 2 workers),
+backs off on 403s, and resumes where it stopped, so it is safe to re-run.
 
 ## Train
 ```
-python src/train.py
+python src/train.py           # or: python retrain_model.py (adds rollback + regression guard)
 ```
-Compares Random Forest, HistGradientBoosting, Logistic Regression (+ CatBoost
-if installed). Selects the winner by HONEST TIME-BASED HOLDOUT accuracy
-(train on all-but-latest month, test only on that unseen month) -- not
-cross-validation score alone. Also prints the top device x area combinations.
-See MODEL_CARD.md for current production numbers -- regenerate that file's
-numbers after every retrain.
+Compares model families × data mixes (mill-only vs. + power-plant data)
+× an explicit-device-mention rule. It selects by an **honest rolling
+backtest** on the mill's own last 3 months (train strictly before, test
+on the unseen month). Power-plant data never enters a test set and is
+only adopted if it wins by at least 2 points. See MODEL_CARD.md.
 
 ## Test
 ```
-python tests/test_all.py
+python -m pytest tests/test_all.py
 ```
-10 tests, all currently passing against the real trained model.
 
-## Run the API (development)
+## Run locally
 ```
 uvicorn app:app --reload --port 8000
 ```
-For production deployment (always-on service, real network access,
-correct CORS/firewall setup), see DEPLOYMENT.md instead -- do not use
-`--reload` in production.
+Open http://127.0.0.1:8000/ for the dashboard and /docs for the API.
 
-## Top device x area combinations (from reports/device_area_breakdown.csv)
-1. PHOTOCELL @ SAW -- 887 min (37 events)
-2. LVDT @ BDM -- 872 min (17 events)
-3. HMD @ BDM -- 843 min (41 events)
-4. PHOTOCELL @ COOLING_BED -- 585 min (26 events)
-5. ENCODER @ BDM -- 483 min (10 events)
+## Deploy
+Render Blueprint (`render.yaml`): New → Blueprint → select this repo.
+See DEPLOYMENT.md.
 
-## Data reconciliation note
-data/raw_delays.xlsx and the legacy master_events.csv were confirmed to be
-95% overlapping exports of the same underlying delays. src/ingest.py
-reconciles them without double-counting -- see the module docstring for
-full detail. One known open question: two rows in raw_delays.xlsx for
-"1 billet rejected at BDM due to HMD Continuous sensing" on 18-Nov-2025 are
-byte-for-byte identical (same 20 min duration) -- worth checking the
-original spreadsheet to confirm this is a genuine duplicate entry vs. a
-copy-paste artifact.
-
-## Shadow-mode validation
-The dashboard's "Shadow-Mode Review" panel lets a reviewer log a real
-delay, independently diagnose it, then compare against the model's
-(initially hidden) prediction. See MODEL_CARD.md's "Validation status"
-section -- this has zero resolved entries so far; the model should not
-be treated as authoritative for unsupervised decisions until this
-accumulates real data.
+## Data sources & licences
+- Combi Mill delay log: internal.
+- US NRC Event Notification Reports: public US-government records.
+  Device labels on these are keyword-derived (weak labels), and the
+  API and dashboard say so.
+- WRI Global Power Plant Database v1.3: CC BY 4.0, © World Resources Institute.
 
 ## Known limitations
-See MODEL_CARD.md for the full, current list (accuracy numbers, class
-imbalance, Encoder's known weak spot, data coverage gap, validation
-status). Summary:
-- 344 labeled training events across 8 classes -- a modest sample size.
-- Text-only classification -- no live sensor/PLC signal integration.
-- Not yet validated in shadow mode against real plant outcomes.
+See MODEL_CARD.md. Summary:
+- 344 labeled mill events across 8 classes. More hand-tagged mill data
+  is the main lever for accuracy.
+- Encoder/LVDT are the weakest, most-confused classes.
+- Text-only classification, with no live sensor/PLC signals.
+- Not yet validated in shadow mode at scale.
