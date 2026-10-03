@@ -5,7 +5,40 @@ dashboard (`frontend/`) at `/` and the JSON API on the other routes.
 The browser calls the API on the same origin, so no URL or CORS
 editing is needed.
 
-## Render (recommended)
+## Hugging Face Spaces (recommended, free, no card)
+
+Free CPU Space: 2 vCPU and 16 GB RAM. It sleeps only after about 48 h
+without visitors, versus Render free's 15 min. Hugging Face builds the
+`Dockerfile` on its servers, so no local Docker is needed.
+
+1. One-time login. Create a token with **Write** access at
+   https://huggingface.co/settings/tokens, then run in a terminal:
+   ```
+   venv\Scripts\hf auth login
+   ```
+2. Deploy, and re-run any time to push an update:
+   ```
+   python deploy_hf.py              # public Space
+   python deploy_hf.py --private    # only you (logged in) can open it
+   ```
+   The script creates the Space `<your-user>/field-device-reliability` and
+   uploads only what the app needs (about 40 files, 1.7 MB). The build takes
+   about 5–10 min, then the app is live at
+   `https://<your-user>-field-device-reliability.hf.space/`.
+
+A **public** Space exposes the dashboard *and* `data/master_events.csv`
+(the mill's delay log). That file is already public in the GitHub repo.
+Use `--private` if that matters.
+
+Like Render's free plan, the Space's disk is **ephemeral**: `/log_event`
+and shadow-mode entries are lost when the Space restarts or redeploys.
+Hugging Face sells persistent storage as a paid add-on. If you add it,
+set the Space variable `PDM_DATA_DIR=/data`.
+
+The same `Dockerfile` also runs on any Docker host (Koyeb, Google Cloud
+Run, a plant server): `docker build -t pdm . && docker run -p 7860:7860 pdm`.
+
+## Render (alternative)
 
 1. Push this repo to GitHub (already wired: `render.yaml` is at the repo root).
 2. In the Render dashboard: **New → Blueprint**, then select the repository.
