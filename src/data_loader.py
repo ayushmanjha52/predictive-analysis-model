@@ -1,18 +1,14 @@
-"""Load event data. Single source of truth for how the rest of the
-project reads event data -- every module imports from here rather than
-calling pd.read_csv directly, so a schema fix here propagates
-everywhere at once.
+"""
+Event data loading: the single place the rest of the project reads
+event data from.
 
-Two kinds of events, one schema:
-  - HOME site (Combi Mill): data/master_events.csv -- hand-tagged,
-    has delay minutes, is the honest accuracy benchmark, and is what
-    /log_event appends to.
-  - EXTERNAL fleet (public power-plant data, see external_data.py):
-    data/external/external_events.csv.gz -- weakly labeled, no delay
-    minutes, but carries objective severity signals (reactor_trip,
-    power_lost_pct) and site/plant metadata.
-Every row from either source has `site` and `plant_type` columns, so
-any consumer can filter or group across sites.
+  - Home site (Combi Mill): data/master_events.csv, hand-tagged, with
+    delay minutes; /log_event appends here.
+  - External fleet (public power-plant data, see external_data.py):
+    data/external/external_events.csv.gz, keyword-labeled, no delay
+    minutes, with severity signals (reactor_trip, power_lost_pct).
+
+Both share one schema, including `site` and `plant_type` columns.
 """
 import logging
 import sys
@@ -33,11 +29,7 @@ SITE_COLUMNS = ["site", "plant_type", "state", "country", "reactor_trip",
 
 
 def primary_device(val):
-    """Collapses any compound label (e.g. 'HMD_/_LVDT') to the
-    first-listed device. ingest.py already does this at write time, but
-    this is kept here too as a defensive second layer -- if any future
-    data source ever bypasses ingest.py and writes directly to
-    master_events.csv, this still protects every downstream consumer."""
+    """Collapses a compound label (e.g. 'HMD_/_LVDT') to its first device."""
     if pd.isna(val) or not val:
         return None
     return str(val).split("_/_")[0].split("/")[0].strip().upper()
@@ -73,9 +65,8 @@ def load_master_events() -> pd.DataFrame:
 
 
 def load_external_events() -> pd.DataFrame:
-    """Public power-plant fleet events. Returns an empty frame (same
-    columns) if external_data.py hasn't been run -- the app still works
-    on home data alone."""
+    """Public power-plant events, or an empty frame if external_data.py
+    hasn't been run."""
     if not config.EXTERNAL_EVENTS_PATH.exists():
         logger.warning(f"{config.EXTERNAL_EVENTS_PATH} not found -- run `python src/external_data.py` "
                        f"to add public power-plant data. Continuing with home-site data only.")

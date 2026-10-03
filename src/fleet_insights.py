@@ -1,13 +1,8 @@
 """
-Fleet-wide insights -- what the wider power-generation fleet (public
-NRC event reports across every US power reactor + the WRI Global Power
-Plant Database) says about the same field devices the Combi Mill is
-trying to make more reliable.
-
-Every number here is computed from real public records (see
-external_data.py for sources and the labeling method). Device labels on
-fleet events are keyword-derived (weak labels) -- reported as such in
-every response via `label_method`, never presented as hand-tagged.
+Fleet-wide insights from public power-sector data: US NRC power-reactor
+event reports and the WRI Global Power Plant Database (see
+external_data.py). Device labels on fleet events are keyword-derived;
+responses state this in `label_method`.
 """
 import sys
 from pathlib import Path
@@ -27,8 +22,7 @@ logger = logging.getLogger(__name__)
 LABEL_METHOD = ("Fleet device labels are keyword-derived from NRC event narratives (weak labels; "
                 "events naming 2+ device classes are left unlabeled).")
 
-# Evidence-based actions per failure mode -- what the fleet narratives
-# say went wrong maps to what to check first at the Combi Mill.
+# Recommended action per failure mode.
 FAILURE_MODE_ACTIONS = {
     "CALIBRATION_DRIFT": "add setpoint/as-found checks to the PM schedule and trend drift between calibrations",
     "WIRING_CONNECTION": "inspect terminations, connectors and cable routing near heat/vibration sources",
@@ -44,11 +38,6 @@ FAILURE_MODE_ACTIONS = {
 @lru_cache(maxsize=1)
 def _external():
     return load_external_events()
-
-
-def clear_cache():
-    _external.cache_clear()
-    _wri.cache_clear()
 
 
 def _labeled(ext):
@@ -82,9 +71,8 @@ def fleet_overview() -> dict:
 
 
 def device_ranking() -> dict:
-    """Per device class across the fleet: how often it fails, how many
-    plants, how often a failure trips the reactor (objective severity),
-    plus the Combi Mill's own numbers for the same device."""
+    """Per device class: fleet failures, plants affected, trip rate and
+    power lost, alongside the Combi Mill's own numbers."""
     ext = _external()
     lab = _labeled(ext)
     if len(lab) == 0:
@@ -117,7 +105,7 @@ def device_ranking() -> dict:
 
 
 def failure_modes(device: str = None) -> dict:
-    """What actually went wrong, mined from fleet narratives, per device."""
+    """Failure modes per device, mined from fleet narratives."""
     lab = _labeled(_external())
     if device:
         lab = lab[lab["primary_device"] == device.upper()]
@@ -136,9 +124,8 @@ def failure_modes(device: str = None) -> dict:
 
 
 def cross_site_lessons() -> dict:
-    """For each device the Combi Mill tracks that ALSO appears in the
-    power-plant fleet: how it ranks in both places, how severe fleet
-    failures are, the top real failure modes, and a concrete action."""
+    """Devices present at both the mill and in the fleet: rank in each,
+    fleet trip rate, top failure modes and recommended actions."""
     ranking = {r["device"]: r for r in device_ranking()["devices"]}
     modes = {r["device"]: r for r in failure_modes()["by_device"]}
     lessons = []
@@ -183,9 +170,7 @@ def yearly_trend(top_n_devices: int = 6) -> dict:
 
 
 def grid_insights(top_n: int = 10) -> dict:
-    """Grid / offsite-power events -- the transmission-grid side of
-    plant reliability: how often, what caused them, how often they
-    tripped the unit, and which plants see them most."""
+    """Grid / offsite-power events: frequency, causes, trip rate, top plants."""
     ext = _external()
     grid = ext[ext["grid_related"]].copy()
     if len(grid) == 0:
@@ -227,13 +212,9 @@ MIN_EVENTS_FOR_PLANT_RANKING = 10
 
 
 def plant_reliability(top_n: int = 15) -> dict:
-    """Unit trips (reactor/turbine) per GW of installed capacity, per
-    NRC plant -- normalizes raw counts so a big multi-unit site isn't
-    ranked worst just for being big. Uses ALL reported events (trips are
-    an objective outcome, not a keyword label), and only ranks plants
-    with >= MIN_EVENTS_FOR_PLANT_RANKING events. Capacity comes from the
-    WRI database, matched by plant name (unmatched plants are reported,
-    not guessed)."""
+    """Unit trips per GW of installed capacity, per NRC plant with at least
+    MIN_EVENTS_FOR_PLANT_RANKING events. Capacity is matched to the WRI
+    database by plant name; unmatched plants are reported and left out."""
     ext = _external()
     wri = _wri()
     if len(ext) == 0 or len(wri) == 0:

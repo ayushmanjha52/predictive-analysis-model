@@ -26,7 +26,6 @@
 <main class="page">
 <div class="tab-pane active" id="tab-mill">
 
-  <!-- KPI cards -->
   <section class="kpi-grid">
     <div class="kpi-card c-accent">
       <p class="kpi-label">Total Field-Device Delay</p>
@@ -50,7 +49,6 @@
     </div>
   </section>
 
-  <!-- Alerts -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Alerts &amp; Findings</h2>
@@ -60,8 +58,6 @@
     </div>
   </section>
 
-  <!-- Monthly trend line chart -- uses Chart.js (loaded via CDN, was
-       previously unused despite being included) -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Monthly Trend</h2>
@@ -87,7 +83,6 @@
       <div id="forecastBars"></div>
       <p class="panel-footnote" id="forecastFootnote">&nbsp;</p>
 
-      <!-- Per-device 6-month forecast checker -->
       <div class="forecast-check-row">
         <select id="forecastDeviceSelect" title="Choose a device" aria-label="Choose a device"></select>
         <button class="btn-check" id="checkForecastBtn">Check 6-Month Forecast</button>
@@ -96,7 +91,6 @@
     </section>
   </div>
 
-  <!-- Red-zone areas -- which 2 areas currently carry the most delay -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Red-Zone Areas</h2>
@@ -105,9 +99,6 @@
     <div id="areaRiskBars"></div>
   </section>
 
-  <!-- Review queue -- unresolved delays ranked by impact, for a human
-       to tag manually. Only ~1-2% of unresolved delays contain a safely
-       auto-taggable device signal; the rest need human judgment. -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Untagged Delay Review Queue</h2>
@@ -121,9 +112,6 @@
     </div>
   </section>
 
-  <!-- Shadow-mode validation -- tracks predicted-vs-actual agreement
-       once real usage begins via /shadow_predict + /shadow_resolve.
-       Empty/zero state is expected until the team starts using it. -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Shadow-Mode Validation</h2>
@@ -132,11 +120,8 @@
     <div id="shadowStatsBody">Loading…</div>
   </section>
 
-  <!-- Shadow-mode review form -- for a non-technical reviewer.
-       Two steps, deliberately kept separate on screen: Step 1 logs the
-       delay and gets a prediction recorded WITHOUT showing it. Step 2
-       only unlocks after Step 1, and only then reveals whether the
-       reviewer's independent finding matched. -->
+  <!-- Step 1 records the prediction without showing it; step 2 reveals
+       it only after the reviewer records their own diagnosis. -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Shadow-Mode Review</h2>
@@ -206,7 +191,6 @@
       </table>
     </div>
   </section>
-  <!-- Device x Area breakdown -- the specific "which device, which area" requirement -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Device &times; Area Breakdown</h2>
@@ -220,7 +204,6 @@
     </div>
   </section>
 
-  <!-- Severity table (field devices, reliable sample size) -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Severity vs. Frequency vs. FMEA Risk — Field Devices</h2>
@@ -234,9 +217,6 @@
     </div>
   </section>
 
-  <!-- Low-sample devices, shown separately -- never used for Top
-       Contributor rankings since a single event isn't statistically
-       meaningful for severity comparison -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Other Devices — Low Sample Size</h2>

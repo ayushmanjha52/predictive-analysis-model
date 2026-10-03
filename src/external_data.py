@@ -1,41 +1,23 @@
 """
-External, PUBLIC power-sector data -- extends this project beyond the
-Combi Mill so insights (and classifier training data) come from the
-wider power-generation fleet, not one mill.
-
-Two real sources, both public and free:
+Public power-sector data.
 
 1. NRC Event Notification Reports (US Nuclear Regulatory Commission)
    https://www.nrc.gov/reading-rm/doc-collections/event-status/event/
-   Every reportable event at every US power reactor since the 1990s,
-   with a free-text narrative written by plant staff ("reactor tripped
-   on a spurious low-pressure signal from a failed pressure switch").
-   Structurally the same thing as the Combi Mill delay log: a short
-   human-written description of a failure + where it happened. Only
-   "Power Reactor" events are kept (materials/agreement-state events
-   about lost radiography gauges etc. are not field-device failures).
-   Each event also carries SCRAM code (did it trip the reactor?) and
-   initial/current power level -- a real, objective severity signal.
+   Reportable events at US power reactors, each with a plant-written
+   narrative, SCRAM code and power levels. Only "Power Reactor" events
+   are kept.
 
-2. WRI Global Power Plant Database (World Resources Institute, CC-BY 4.0)
+2. WRI Global Power Plant Database (CC BY 4.0)
    https://github.com/wri/global-power-plant-database
-   ~35,000 power plants in 167 countries: capacity, fuel, location,
-   generation. Used for fleet-wide context (where the installed base
-   is, by fuel/country) and to normalize NRC event counts per GW.
+   About 35,000 plants: capacity, fuel, country, location.
 
-LABELING (honest disclosure): NRC narratives do NOT come with a
-"field_device" column. Labels are assigned by matching device
-vocabulary in the narrative -- weak supervision. To keep label noise
-down, an event is only labeled when EXACTLY ONE device class is
-mentioned; events naming two or more device classes are kept for
-fleet statistics but never used as training labels. The training text
-is the sentence(s) around the device mention, not the whole multi-
-paragraph report, so it reads like a delay-log entry. These rows are
-NEVER used to measure accuracy -- the honest holdout stays 100% real,
-hand-tagged Combi Mill data (see train.py).
+Device labels: NRC narratives have no device field, so an event is
+labeled when exactly one device class is named and failure language
+appears near the mention. The training text is the sentence(s) around
+the mention. These rows are never used to measure accuracy.
 
-Run:  python src/external_data.py            (fetch everything, ~10 min)
-      python src/external_data.py --relabel  (re-run labeling on cached raw data)
+Run:  python src/external_data.py            (fetch; resumable)
+      python src/external_data.py --relabel  (re-label cached raw data)
 """
 import argparse
 import datetime as dt
@@ -63,13 +45,8 @@ WRI_URL = ("https://raw.githubusercontent.com/wri/global-power-plant-database/ma
            "output_database/global_power_plant_database.csv")
 USER_AGENT = "pdm-research/1.0 (field-device reliability study; public data)"
 
-# Device vocabulary for power plants. Order matters only for readability
-# -- every pattern is checked, and an event naming 2+ DIFFERENT classes
-# is left unlabeled (ambiguous). Class names deliberately reuse the
-# Combi Mill's canonical names where the physical device is the same
-# (PRESSURE_SWITCH, FLOW_SWITCH, LVDT, PROXIMITY, ENCODER, PHOTOCELL,
-# LASER) so knowledge transfers across sites; power-plant-specific
-# devices get their own classes.
+# Device vocabulary. Events naming two or more classes stay unlabeled.
+# Class names match the mill's where the device is the same.
 DEVICE_PATTERNS = {
     "PRESSURE_SWITCH": r"pressure switch(?:es)?",
     "FLOW_SWITCH": r"flow switch(?:es)?",
@@ -90,9 +67,7 @@ DEVICE_PATTERNS = {
 }
 _COMPILED = {k: re.compile(v, re.I) for k, v in DEVICE_PATTERNS.items()}
 
-# A device mention only counts as a FAILURE label if failure language
-# appears in the same snippet -- "operators verified the pressure
-# switch" is not a pressure-switch failure.
+# A mention counts as a failure only with failure language nearby.
 FAILURE_WORDS = re.compile(
     r"fail|fault|malfunction|spurious|inoperable|degraded|erratic|drift|"
     r"short|open circuit|grounded|broken|stuck|loose|leak|did not|not (?:function|work|respond)|"
@@ -100,18 +75,15 @@ FAILURE_WORDS = re.compile(
     re.I,
 )
 
-# Grid / offsite-power events -- the "power grid" side of the fleet.
+# Grid / offsite-power events.
 GRID_PATTERN = re.compile(
-    # (not "loop" -- in reactor narratives that's usually a coolant loop)
     r"loss of (?:all )?off-?site power|grid (?:disturbance|instability|frequency|voltage)|"
     r"switchyard|transmission line|offsite power|off-site power|load reject",
     re.I,
 )
 TRIP_PATTERN = re.compile(r"reactor trip|automatic (?:reactor )?scram|turbine trip|manual (?:reactor )?scram", re.I)
 
-# Failure-mode mining from the FULL narrative of device-labeled events
-# -- what actually went wrong with the device, in plant staff's own
-# words. Multi-label (an event can be both "wiring" and "moisture").
+# Failure modes mined from the full narrative (multi-label).
 FAILURE_MODES = {
     "CALIBRATION_DRIFT": r"drift|out of calibration|out of tolerance|calibrat|setpoint|as-found",
     "WIRING_CONNECTION": r"wiring|\bwires?\b|loose connection|terminal|connector|\bcables?\b|open circuit|short(?:ed)? circuit|\bground(?:ed)?\b",
@@ -158,12 +130,10 @@ class RateLimited(Exception):
 
 
 def _fetch(url, retries=3, timeout=40):
-    """Returns page text, None for a genuinely missing page (404 -- e.g.
-    weekends), or raises RateLimited on 403 so the caller can back off
-    instead of silently recording the day as empty."""
+    """Page text, None on 404 (no report that day), RateLimited on 403/429."""
     for attempt in range(retries):
         try:
-            # nrc.gov's firewall 403s any request without an Accept header
+            # nrc.gov rejects requests without an Accept header
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return r.read().decode("utf-8", errors="ignore")
@@ -244,11 +214,9 @@ def _load_done_days():
 
 def fetch_nrc_events(start: dt.date, end: dt.date, workers: int = 2, delay: float = 0.5,
                      existing: pd.DataFrame = None) -> pd.DataFrame:
-    """Resumable + polite. Days already fetched (recorded in
-    nrc_days_done.txt) are skipped. nrc.gov rate-limits bursts with 403s
-    -- on a 403 every worker pauses with exponential backoff and the day
-    is retried, never recorded as an empty day (the first version of
-    this scraper did that and silently lost most of 2020-2026)."""
+    """Resumable: days recorded in nrc_days_done.txt are skipped. On a
+    rate-limit response all workers back off exponentially and the day
+    is retried."""
     done_days = _load_done_days()
     days = [start + dt.timedelta(days=i) for i in range((end - start).days + 1)]
     todo = [d for d in days if d.isoformat() not in done_days]
@@ -285,7 +253,7 @@ def fetch_nrc_events(start: dt.date, end: dt.date, workers: int = 2, delay: floa
             n += 1
             if n % 200 == 0:
                 logger.info(f"  {n}/{len(todo)} days, {len(events)} power-reactor events total")
-                # checkpoint so an interrupted run loses nothing
+                # checkpoint
                 pd.DataFrame(events).drop_duplicates("event_number") \
                     .to_csv(NRC_RAW_PATH, index=False, compression="gzip")
     df = pd.DataFrame(events).drop_duplicates("event_number")
@@ -311,8 +279,7 @@ def label_event(text):
     for i, s in enumerate(sents):
         if _COMPILED[device].search(s):
             snippet = s
-            # pull in the next sentence when the mention sentence is short
-            # -- the cause ("...due to a failed X") often follows the effect
+            # short mention sentence: include the next one (often the cause)
             if len(snippet) < 120 and i + 1 < len(sents):
                 snippet = snippet + " " + sents[i + 1]
             snippet = snippet[:400]
@@ -323,10 +290,8 @@ def label_event(text):
 
 
 def build_nrc_events(raw: pd.DataFrame) -> pd.DataFrame:
-    """Raw NRC events -> this project's event schema (same columns as
-    master_events.csv, plus site metadata). Every power-reactor event is
-    kept (fleet statistics); only cleanly labeled ones carry a
-    field_device."""
+    """Raw NRC events -> the shared event schema plus site metadata.
+    All events are kept; only cleanly labeled ones get a field_device."""
     rows = []
     for _, r in raw.iterrows():
         text = r["event_text"] if isinstance(r["event_text"], str) else ""

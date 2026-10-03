@@ -1,5 +1,7 @@
 # Field-Device Predictive Maintenance: Combi Mill + Power Fleet
 
+Live: https://field-device-pdm.onrender.com
+
 Supports the FY27 target: Reliability Enhancement of field devices by
 reduction of delays by 50% in FY27 over FY26.
 
@@ -18,7 +20,7 @@ The dashboard has three tabs:
 ## Documentation map
 - **This file**: setup and day-to-day commands
 - **DEPLOYMENT.md**: Render deployment (and plant-server alternative)
-- **MODEL_CARD.md**: current model, honest accuracy, what helped and what didn't
+- **MODEL_CARD.md**: current model, accuracy, what helped and what didn't
 
 ## Setup
 ```
@@ -39,7 +41,7 @@ backs off on 403s, and resumes where it stopped, so it is safe to re-run.
 python src/train.py           # or: python retrain_model.py (adds rollback + regression guard)
 ```
 Compares model families × data mixes (mill-only vs. + power-plant data)
-× an explicit-device-mention rule. It selects by an **honest rolling
+× an explicit-device-mention rule. It selects by an **rolling
 backtest** on the mill's own last 3 months (train strictly before, test
 on the unseen month). Power-plant data never enters a test set and is
 only adopted if it wins by at least 2 points. See MODEL_CARD.md.
@@ -57,7 +59,6 @@ Open http://127.0.0.1:8000/ for the dashboard and /docs for the API.
 
 ## Deploy
 Render (free): New → Blueprint → select this repo (`render.yaml`).
-Hugging Face Spaces (PRO only): `python deploy_hf.py`.
 See DEPLOYMENT.md.
 
 ## Data sources & licences

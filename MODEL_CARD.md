@@ -18,7 +18,7 @@ Source of truth: `models/training_manifest.json` (trained 2026-10-03).
   (both selected automatically, see "How the winner is chosen")
 - **Training data: Combi Mill only** (344 hand-tagged events, 8 classes).
   Public power-plant data was evaluated and *not* adopted; see below.
-- **Honest backtest accuracy: 62.7%** (161 test events). The model is
+- **Backtest accuracy: 62.7%** (161 test events). The model is
   trained only on months before each test month, then tested on
   Mar-26, Apr-26 and May-26 in turn:
 
@@ -35,7 +35,7 @@ Source of truth: `models/training_manifest.json` (trained 2026-10-03).
 The old headline was one month (May-26, 36 events). One misclassification
 there moves the number about 3 points, so choosing between models a few
 points apart was mostly noise. The new headline pools **three** unseen
-months with the same honest procedure. That is a harder and more stable
+months with the same procedure. That is a harder and more stable
 number, not a worse model: on the same May-26 month the new model scores
 **75.0% vs. 69.4%**.
 
@@ -79,10 +79,10 @@ Each run of `python src/train.py` compares:
 - × 4 data mixes (home only; home + external at weight 0.15 / 0.4 / 1.0)
 - × explicit-mention rule on/off
 
-The run selects by pooled honest backtest. Ties go to the simpler option.
+The run selects by pooled backtest. Ties go to the simpler option.
 External data must win by at least 2 points.
 
-## Per-class performance (honest backtest)
+## Per-class performance (backtest)
 | Device | Precision | Recall | Test events |
 |---|---|---|---|
 | Pressure Switch | 0.90 | 1.00 | 9 |
@@ -107,7 +107,7 @@ Pressure Switch 25 · Flow Switch 11 · Laser 6. RFID, TT, and HIP
 
 ## Data coverage
 Of 684 logged mill events, 349 resolve to a field device. The rest are
-genuine non-field-device causes (crane, motor, furnace, sequence) or
+non-field-device causes (crane, motor, furnace, sequence) or
 descriptions too vague to tag.
 
 ## Validation status

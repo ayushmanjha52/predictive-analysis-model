@@ -1,12 +1,7 @@
 """
-CausePredictor -- the ONE prediction implementation, used by both the
-API and any CLI/test. Never reimplemented elsewhere (that duplication
-caused repeated production bugs earlier in this project).
-
-Returns, per your requirement: predicted device, confidence, AND the
-typical/expected delay duration for that device (from historical data)
--- so a classification isn't just "what" but also "how long this
-usually takes."
+CausePredictor: the single prediction implementation used by the API
+and tests. Returns the predicted device, confidence, top candidates and
+the device's typical historical delay duration.
 """
 import re
 import sys
@@ -24,16 +19,11 @@ from feature_engineering import prepare_modeling_data, align_features
 from data_loader import load_master_events
 
 
-# Explicit device-name vocabulary for the home site. Abbreviations
-# (PH/PS/FS/PX) are the plant's own Sub_Category codes (see ingest.py's
-# DEVICE_NORMALIZE). When a delay text names EXACTLY ONE device class,
-# that is far more reliable than any learned pattern -- measured on the
-# home site's labeled data: ~29% of events name exactly one device, and
-# the named device matches the human label ~94% of the time. It mainly
-# fixes rare classes the model has barely seen (e.g. "flow switch
-# changed" was predicted PRESSURE_SWITCH because FLOW_SWITCH had ~5
-# training examples). Whether it is used at all is decided by train.py's
-# honest backtest, not assumed.
+# Explicit device names (PH/PS/FS/PX are the plant's Sub_Category codes).
+# When a delay text names exactly one device class, that class is used:
+# on labeled mill data ~29% of events name exactly one device and it
+# matches the human label ~94% of the time. train.py decides whether the
+# rule is enabled based on the backtest.
 EXPLICIT_DEVICE_NAMES = {
     "PHOTOCELL": r"photo ?cells?|\bph\b|photo ?sensors?",
     "HMD": r"\bhmds?\b|hot metal detector",
@@ -64,11 +54,8 @@ def apply_explicit_mention_rule(texts, preds, allowed):
 
 
 def restrict_to_classes(proba, classes, allowed):
-    """Zero out (and renormalize away) classes not in `allowed`. Used at
-    the home site so a Combi Mill delay is never labeled with a device
-    class that only exists in the power-plant fleet data (e.g.
-    LEVEL_TRANSMITTER). Applied identically in train.py's honest
-    backtest, so the reported accuracy includes this rule."""
+    """Zero out classes not in `allowed` and renormalize. Keeps home-site
+    predictions to device classes seen at the home site."""
     proba = np.asarray(proba, dtype=float)
     if not allowed:
         return proba
@@ -95,9 +82,7 @@ class CausePredictor:
         self.use_explicit_rule = bool(meta.get("explicit_mention_rule", False))
         self.explicit_rule_precision = meta.get("explicit_rule_precision")
 
-        # Precompute typical duration per device from historical data,
-        # so a prediction can say "Photocell delays typically run ~23
-        # min" alongside the classification itself.
+        # Typical historical delay duration per device.
         self._device_duration_stats = self._compute_duration_stats()
 
     def _compute_duration_stats(self):
@@ -135,8 +120,7 @@ class CausePredictor:
         named = explicit_device_mention(reason_text) if (
             self.use_explicit_rule and plant_type == config.HOME_PLANT_TYPE) else None
         if named and named in self.home_classes:
-            # Confidence = the rule's MEASURED precision on labeled home
-            # data (from training), not a made-up number.
+            # Confidence = the rule's measured precision on labeled data.
             decision_basis = "explicit_device_mention"
             top_device = named
             top_confidence = round(max(self.explicit_rule_precision or 0.0,

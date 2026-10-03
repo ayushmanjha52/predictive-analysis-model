@@ -1,11 +1,9 @@
 """
-FMEA risk lookup + fusion with empirical Pareto data.
+FMEA risk lookup, fusion with the empirical Pareto, and per-device
+maintenance recommendations.
 
-Devices with no FMEA sheet get risk_level="UNKNOWN" + is_estimated=True
--- NEVER a fabricated "Low". Confirmed important in this project:
-Photocell has repeatedly been a top empirical delay contributor while
-sometimes lacking an FMEA sheet -- silently defaulting it to "Low"
-would be actively misleading.
+Devices without an FMEA sheet are reported as risk_level="UNKNOWN" with
+is_estimated=True rather than defaulted to "Low".
 """
 import sys
 from pathlib import Path
@@ -41,22 +39,6 @@ def load_fmea_scores() -> pd.DataFrame:
     if df is None:
         return pd.DataFrame(columns=["device", "rpn", "severity", "occurrence", "detection", "risk_level"])
     return df
-
-
-def get_fmea_risk(device: str) -> dict:
-    df = _load_fmea_data()
-    device_key = device.upper().strip()
-    if df is not None:
-        row = df[df["device"] == device_key]
-        if len(row):
-            r = row.iloc[0]
-            return {
-                "rpn": int(r["rpn"]), "severity": float(r["severity"]),
-                "occurrence": float(r["occurrence"]), "detection": float(r["detection"]),
-                "risk_level": r["risk_level"], "is_estimated": False,
-            }
-    return {"rpn": None, "severity": None, "occurrence": None, "detection": None,
-            "risk_level": "UNKNOWN", "is_estimated": True}
 
 
 def fuse_pareto_with_fmea(pareto: pd.DataFrame, fmea: pd.DataFrame) -> pd.DataFrame:
@@ -96,7 +78,3 @@ RECOMMENDATIONS = {
 def get_recommendation(device: str) -> str:
     return RECOMMENDATIONS.get(device.upper(), "No specific recommendation on file for this device yet.")
 
-
-if __name__ == "__main__":
-    for d in ["HMD", "LVDT", "ENCODER", "PHOTOCELL", "PROXIMITY"]:
-        print(f"{d:16s} -> {get_fmea_risk(d)}")

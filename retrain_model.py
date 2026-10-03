@@ -1,41 +1,13 @@
 """
-Retraining Pipeline for Combi Mill PdM Model
-Run this script whenever you have new delay data to update the model.
+Retraining with rollback.
 
-FIXES vs. previous version -- both confirmed with real data:
+Runs the standard training pipeline (src/train.py) and adds:
+  - timestamped snapshots of the deployed artifacts in models/archive/,
+  - a regression guard: if the new model's backtest accuracy is
+    lower than the currently deployed model's, the previous artifacts
+    are restored (override with allow_regression=True).
 
-1. CRITICAL: used a random train_test_split(test_size=0.20) to evaluate
-   the retrained model. Confirmed on this data: this reports 83.6%
-   "accuracy" vs. the honest ~62-65% established repeatedly elsewhere in
-   this project via proper time-based holdout (train on all-but-latest
-   month, test only on that unseen month). A random split shuffles
-   similar-phrased delays from every month together, the same way
-   k-fold CV did earlier -- it flatters the number without telling you
-   anything about performance on a genuinely new future month.
-
-2. CRITICAL: reimplemented its own training logic from scratch (fixed
-   RandomForest hyperparameters, no model comparison, no compound-label
-   collapsing) instead of reusing train.py's actual methodology. This
-   meant every retrain would SILENTLY REPLACE whatever model
-   train.py's rigorous comparison had selected as the genuine best
-   (currently Logistic Regression, per training_manifest.json) with a
-   plain, untuned Random Forest -- using an inflated accuracy number as
-   false reassurance that this was an improvement.
-
-3. Never touched training_manifest.json, so after running this script,
-   the manifest (which app.py's /model_info reads) would describe a
-   model that's no longer actually deployed -- reintroducing the exact
-   "stale metadata" bug fixed in app.py earlier this session, via a
-   completely different code path.
-
-FIX: this is now a thin wrapper around train.py's train_and_evaluate(),
-which already does model comparison + compound-label collapsing + honest
-holdout selection + manifest writing correctly. Retraining should mean
-"re-run the same rigorous process on updated data," never a separate,
-looser process. This script adds ONLY two things on top: timestamped
-version snapshots (for rollback/audit) and a regression guard that
-refuses to silently keep a new model that's WORSE than what's currently
-deployed, on the metric that actually matters (honest holdout accuracy).
+Usage: python retrain_model.py
 """
 import json
 import logging
@@ -49,40 +21,41 @@ from src.train import train_and_evaluate
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
+ARTIFACTS = ["cause_classifier_model.pkl", "tfidf_vectorizer.pkl",
+             "feature_names.pkl", "training_manifest.json"]
+
 
 def _load_manifest():
     path = MODELS_DIR / "training_manifest.json"
     return json.load(open(path)) if path.exists() else None
 
 
-def _honest_metric(manifest):
-    """Pooled multi-month backtest accuracy (train.py v3+), falling back
-    to the single-month holdout for manifests written by older versions."""
+def _backtest_metric(manifest):
+    """Pooled backtest accuracy; falls back to the single-month holdout
+    for manifests written before the backtest was introduced."""
     return manifest.get("backtest_accuracy", manifest.get("holdout_accuracy"))
 
 
 def _archive_current_artifacts(timestamp):
-    """Snapshot the artifacts that were deployed BEFORE this retrain,
-    so there's always a way back if the new model regresses."""
     archive_dir = MODELS_DIR / "archive"
     archive_dir.mkdir(exist_ok=True)
-    for fname in ["cause_classifier_model.pkl", "tfidf_vectorizer.pkl",
-                  "feature_names.pkl", "training_manifest.json"]:
+    for fname in ARTIFACTS:
         src = MODELS_DIR / fname
         if src.exists():
             shutil.copy(src, archive_dir / f"{Path(fname).stem}_{timestamp}{Path(fname).suffix}")
     logger.info(f"Archived pre-retrain artifacts to {archive_dir} with timestamp {timestamp}")
 
 
+def _restore_from_archive(timestamp):
+    archive_dir = MODELS_DIR / "archive"
+    for fname in ARTIFACTS:
+        backup = archive_dir / f"{Path(fname).stem}_{timestamp}{Path(fname).suffix}"
+        if backup.exists():
+            shutil.copy(backup, MODELS_DIR / fname)
+    logger.info("Previous artifacts restored -- the deployed model is unchanged.")
+
+
 def retrain_model(allow_regression=False):
-    """
-    allow_regression: if False (default), refuses to leave a retrained
-    model deployed if its honest holdout accuracy is worse than the
-    previously-deployed model's -- restores the pre-retrain artifacts
-    from the archive instead. Set True only if you deliberately want to
-    accept a regression (e.g. testing, or a known short-term dip while
-    gathering more data for a new device).
-    """
     logger.info("=" * 60)
     logger.info("STARTING MODEL RETRAINING")
     logger.info("=" * 60)
@@ -90,91 +63,40 @@ def retrain_model(allow_regression=False):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     previous_manifest = _load_manifest()
-    previous_holdout = None
-    previous_winner = None
+    previous_score = _backtest_metric(previous_manifest) if previous_manifest else None
     if previous_manifest:
-        # FIX: confirmed by actually running this and inspecting the real
-        # manifest -- train.py writes "winner_model" (not "winner"), and
-        # "holdout_accuracy" is a TOP-LEVEL field (not nested inside
-        # all_candidates[winner]). The old lookup silently returned None
-        # for both, every single time, making the regression guard a
-        # no-op that never actually compared anything.
-        previous_winner = previous_manifest.get("winner_model")
-        previous_holdout = _honest_metric(previous_manifest)
-        logger.info(f"Currently deployed model: {previous_winner}  "
-                    f"(honest holdout accuracy: {previous_holdout})")
+        logger.info(f"Currently deployed model: {previous_manifest.get('winner_model')} "
+                    f"(backtest accuracy: {previous_score})")
     else:
-        logger.info("No existing training_manifest.json found -- this looks like a first-time train.")
+        logger.info("No existing training_manifest.json -- first-time train.")
 
     _archive_current_artifacts(timestamp)
-
-    # FIX: reuse train.py's actual rigorous methodology, don't
-    # reimplement a separate, looser version of it here.
-    logger.info("Running train.py's train_and_evaluate() "
-                "(model comparison + honest holdout selection)...")
-    # FIX: confirmed by actually running this end-to-end -- train_and_evaluate()
-    # in this project's src/train.py takes NO arguments. Class-count
-    # filtering happens internally via config.MIN_CLASS_COUNT, not a
-    # parameter passed in from here. The old call signature
-    # (min_samples_per_class=...) was written against a different
-    # version of train.py and crashed with a TypeError the first time
-    # this script was actually run against the current codebase.
     train_and_evaluate()
 
     new_manifest = _load_manifest()
     if new_manifest is None:
-        # Genuine failure case: train_and_evaluate() ran without raising,
-        # but no manifest was written -- treat this as a hard failure
-        # rather than silently continuing with new_winner/new_holdout as
-        # None, which would make the regression guard below a no-op
-        # exactly like the bug already found and fixed once in this file.
-        logger.error("Training completed but no training_manifest.json was found afterward. "
-                     "Restoring previous artifacts -- refusing to leave an undefined model deployed.")
+        logger.error("Training finished but wrote no training_manifest.json. Restoring previous artifacts.")
         _restore_from_archive(timestamp)
-        return
+        return {"status": "failed"}
 
-    new_winner = new_manifest.get("winner_model")
-    new_holdout = _honest_metric(new_manifest)
-    logger.info(f"New model after retraining: {new_winner}  "
-                f"(honest holdout accuracy: {new_holdout})")
+    new_score = _backtest_metric(new_manifest)
+    logger.info(f"New model: {new_manifest.get('winner_model')} (backtest accuracy: {new_score})")
 
-    # FIX: regression guard -- never silently deploy a worse model.
-    if previous_holdout is not None and new_holdout is not None:
-        if new_holdout < previous_holdout and not allow_regression:
-            logger.warning(
-                f"REGRESSION DETECTED: new model's holdout accuracy ({new_holdout}) "
-                f"is WORSE than the previously deployed model's ({previous_holdout}). "
-                f"Restoring previous artifacts -- the retrain's output will NOT be "
-                f"left deployed. Re-run with allow_regression=True to override "
-                f"this (not recommended unless you have a specific reason)."
-            )
+    if previous_score is not None and new_score is not None and new_score < previous_score:
+        if not allow_regression:
+            logger.warning(f"REGRESSION: new backtest accuracy {new_score} < deployed {previous_score}. "
+                           f"Restoring previous artifacts (use allow_regression=True to override).")
             _restore_from_archive(timestamp)
-            return {"status": "regression_blocked", "previous_holdout": previous_holdout,
-                    "attempted_holdout": new_holdout}
-        elif new_holdout >= previous_holdout:
-            logger.info(f"Improvement or no regression confirmed "
-                        f"({previous_holdout} -> {new_holdout}). Keeping new model deployed.")
+            return {"status": "regression_blocked", "previous": previous_score, "attempted": new_score}
 
-    # Versioned snapshot of the (accepted) new artifacts, for audit history.
-    for fname in ["cause_classifier_model.pkl", "tfidf_vectorizer.pkl",
-                  "feature_names.pkl", "training_manifest.json"]:
+    for fname in ARTIFACTS:
         src = MODELS_DIR / fname
         if src.exists():
             shutil.copy(src, MODELS_DIR / "archive" / f"{Path(fname).stem}_{timestamp}_accepted{Path(fname).suffix}")
 
-    logger.info("Retraining completed successfully! New model is deployed.")
-    return {"status": "deployed", "previous_holdout": previous_holdout, "new_holdout": new_holdout,
-            "winner": new_winner, "timestamp": timestamp}
-
-
-def _restore_from_archive(timestamp):
-    archive_dir = MODELS_DIR / "archive"
-    for fname in ["cause_classifier_model.pkl", "tfidf_vectorizer.pkl",
-                  "feature_names.pkl", "training_manifest.json"]:
-        backup = archive_dir / f"{Path(fname).stem}_{timestamp}{Path(fname).suffix}"
-        if backup.exists():
-            shutil.copy(backup, MODELS_DIR / fname)
-    logger.info("Previous artifacts restored -- deployed model is unchanged from before this retrain attempt.")
+    logger.info("Retraining complete. New model deployed.")
+    return {"status": "deployed", "previous": previous_score, "new": new_score,
+            "winner": new_manifest.get("winner_model"), "timestamp": timestamp}
 
 
 if __name__ == "__main__":

@@ -1,9 +1,5 @@
-// script.js -- talks to the FastAPI backend in app.py.
-// Per latest requirements: Predict panel and Event Log removed (not
-// adding value / not fetching reliably); replaced with a percentage-
-// based 6-month device forecast and a red-zone area risk panel.
-// Every field name here is verified against real, live-run backend
-// responses -- not guessed.
+// Dashboard logic: fetches from the FastAPI backend (app.py) and renders
+// the Combi Mill, Power Fleet and Global Power Plants tabs.
 
 const state = { stats: null };
 
@@ -47,9 +43,6 @@ async function loadStats() {
   populateForecastDeviceSelect(data);
 }
 
-// loadModelInfo() removed per user request -- the "MODEL: CATBOOST ·
-// HOLDOUT ACCURACY..." footer line is no longer shown.
-
 async function loadForecast() {
   const data = await apiGet("/forecast/all_devices", { months: 6 });
   renderForecastBars(data);
@@ -80,9 +73,6 @@ async function loadShadowStats() {
   return data;
 }
 
-// NEW: device health score / recurrence risk -- follows the exact same
-// loadX()/renderX() pattern as loadReviewQueue()/loadShadowStats()
-// above, using apiGet() like every other GET call in this file.
 async function loadHealthScore() {
   const data = await apiGet("/health_score", { top_n: 10 });
   renderHealthScore(data);
@@ -103,7 +93,7 @@ async function populateShadowDropdowns() {
       sel.appendChild(opt);
     });
   } catch (e) {
-    // non-critical -- form still usable, dropdown just stays empty
+    // non-critical: the form still works with an empty dropdown
   }
 }
 
@@ -135,7 +125,6 @@ async function shadowLogDelay() {
   try {
     const payload = { reason_text: reasonText, area };
     if (minsVal !== "") payload.mins = parseFloat(minsVal);
-    // POST directly -- apiGet is GET-only, this needs its own POST call
     const res = await fetch(apiUrl("/shadow_predict"), {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -186,7 +175,7 @@ async function shadowResolveDelay() {
     }
     const result = await res.json();
     renderShadowResult(result);
-    await loadShadowStats(); // refresh the running agreement-rate panel
+    await loadShadowStats();
   } catch (e) {
     errorEl.innerHTML = `<div class="error-banner">${escapeHtml(e.message)}</div>`;
   } finally {
@@ -323,11 +312,7 @@ function renderShadowStats(d) {
   `;
 }
 
-// NEW: device health score / recurrence risk table -- ranked list of
-// device+area combinations most likely to fail again soon. Follows the
-// exact same rendering pattern as renderReviewQueue()/renderShadowStats()
-// above. Field names verified against the real /health_score response
-// shape (top_at_risk[], survival_model_available, note).
+// Device + area combinations most likely to fail again soon.
 function renderHealthScore(d) {
   const tbody = document.getElementById("healthScoreBody");
   const noteEl = document.getElementById("healthScoreNote");
@@ -365,8 +350,6 @@ function renderHealthScore(d) {
   }).join("") : `<tr><td colspan="7" class="text-dim">No health score data available yet.</td></tr>`;
 }
 
-// NEW: populate the "Check 6-Month Forecast" dropdown with every
-// reliable field device from the current Pareto data.
 function populateForecastDeviceSelect(statsData) {
   const sel = document.getElementById("forecastDeviceSelect");
   const existing = new Set(Array.from(sel.options).map(o => o.value));
@@ -380,7 +363,6 @@ function populateForecastDeviceSelect(statsData) {
   });
 }
 
-// NEW: on-demand single-device 6-month forecast check.
 async function checkDeviceForecast() {
   const device = document.getElementById("forecastDeviceSelect").value;
   const resultEl = document.getElementById("forecastCheckResult");
@@ -400,8 +382,7 @@ async function checkDeviceForecast() {
   }
 }
 
-// NEW: render the low-sample-size devices table (RFID/TT/HIP etc.) --
-// shown separately, never mixed into the main reliable-device ranking.
+// Devices with too few events to rank (shown separately).
 function renderLowSampleTable(d) {
   const rows = d.pareto_low_sample_devices || [];
   const tbody = document.getElementById("lowSampleTableBody");
@@ -462,8 +443,7 @@ function renderTrendChart(forecastData) {
   });
 }
 
-// "Nov-25" -> 202511. Parsed rather than a hardcoded month list, which
-// went stale (any month after Jul-26 sorted as unknown).
+// "Nov-25" -> 202511, for chronological sorting of month labels.
 const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function monthKey(label) {
   const [mon, yy] = String(label).split("-");
@@ -611,8 +591,6 @@ async function init() {
     showPanelError("shadowStatsBody", `/shadow_stats failed: ${e.message}`);
   }
 
-  // NEW: health score panel -- same try/catch pattern as every other
-  // panel above, so a failure here never blocks the rest of the page.
   try {
     await loadHealthScore();
   } catch (e) {
@@ -623,7 +601,7 @@ async function init() {
   try {
     hotspots = await loadUnresolvedHotspots();
   } catch (e) {
-    hotspots = null; // non-critical -- alerts still render without it
+    hotspots = null; // optional: alerts render without it
   }
 
   if (statsOk) {
@@ -642,8 +620,8 @@ async function init() {
 }
 
 // ------------------------------------------------------------- Tabs --
-// Fleet / plant tabs load lazily on first open: keeps the Combi Mill
-// view fast, and Chart.js can't size a canvas inside a hidden tab.
+// Fleet / plant tabs load on first open (Chart.js can't size a canvas
+// inside a hidden tab).
 const tabLoaders = { "tab-fleet": loadFleetTab, "tab-plants": loadPlantsTab };
 const tabsLoaded = new Set(["tab-mill"]);
 
@@ -651,8 +629,8 @@ function setupTabs() {
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => showTab(btn.dataset.tab));
   });
-  // Hash is "#fleet", not "#tab-fleet" -- a hash matching an element id
-  // makes the browser jump-scroll past the header on load.
+  // "#fleet" rather than "#tab-fleet": a hash matching an element id
+  // would scroll the page past the header on load.
   const fromHash = "tab-" + location.hash.replace("#", "");
   if (document.getElementById(fromHash)) showTab(fromHash);
 }
@@ -745,8 +723,7 @@ function renderFleetTrend(d) {
   const canvas = document.getElementById("fleetTrendChart");
   document.getElementById("fleetTrendNote").textContent = d.note || "";
   if (!canvas || typeof Chart === "undefined") return;
-  // Fleet-level totals, not per-device lines: keyword-labeled device
-  // failures are only a handful per year, too sparse to read as a trend.
+  // Fleet totals rather than per-device lines (too few per year to read).
   const line = (label, data, color) => ({
     label, data, borderColor: color, backgroundColor: color + "33", tension: 0.3, pointRadius: 2, borderWidth: 2,
   });
@@ -798,7 +775,7 @@ function renderPlantReliability(d) {
     : `<tr><td colspan="6" class="text-dim">${escapeHtml(d.message || "No data.")}</td></tr>`;
   if (d.matched_plants != null) {
     document.getElementById("plantRelNote").textContent =
-      `Only plants with ≥${d.min_events} reported events are ranked. Capacity was matched by plant name to the WRI database for ${d.matched_plants} plants; ${d.unmatched_plants} could not be matched and are left out (not guessed).`;
+      `Only plants with ≥${d.min_events} reported events are ranked. Capacity was matched by plant name to the WRI database for ${d.matched_plants} plants; ${d.unmatched_plants} could not be matched and are left out.`;
   }
 }
 

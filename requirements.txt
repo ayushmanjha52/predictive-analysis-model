@@ -1,20 +1,16 @@
-# Runtime dependencies -- what the API (app.py) needs to SERVE.
-# This is what Render installs. Training/test extras live in
-# requirements-dev.txt.
+# Runtime dependencies (what Render installs). Training/test extras are
+# in requirements-dev.txt.
 #
-# Versions are PINNED to the exact versions the committed model files
-# (models/*.pkl) were trained with. A pickled scikit-learn/CatBoost model
-# loaded under a different library version can fail to load or silently
-# predict differently -- bump these only together with a retrain.
+# Versions are pinned to those the committed models/*.pkl were trained
+# with; change them only together with a retrain. If a retrain selects
+# CatBoost, add catboost==1.2.10 here (tests/test_all.py checks this).
 pandas==2.3.3
 numpy==2.5.1
 scipy==1.17.1
 scikit-learn==1.9.0
 joblib==1.5.3
-catboost==1.2.10
 
-# Health-score survival model (/health_score); the endpoint degrades
-# gracefully without it, but the 14-day recurrence column needs it.
+# /health_score survival model
 lifelines==0.30.3
 
 # API

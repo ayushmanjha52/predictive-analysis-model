@@ -1,35 +1,22 @@
 """
-THE canonical training script. Compares model families AND training-
-data mixes, selects the winner by HONEST TIME-BASED evaluation on the
-home site's own hand-tagged data -- NOT cross-validation score alone.
-This project has repeatedly confirmed CV can overstate real-world
-performance by 10-25 points on this kind of monthly-batched data.
+Training. Compares model families, training-data mixes and the
+explicit-device-mention rule, and selects by a time-based
+backtest on the home site's own hand-tagged data.
 
 Training data:
-  - Home site (Combi Mill) hand-tagged events -- always included.
-  - External public power-plant events (NRC, weak keyword labels, see
-    external_data.py) -- included at a down-weighted sample weight IF
-    AND ONLY IF doing so improves the honest backtest. The comparison
-    runs fresh every time, so if more external data ever stops helping,
-    the home-only model wins automatically.
+  - Home site (Combi Mill) hand-tagged events: always included.
+  - External power-plant events (keyword-labeled, see external_data.py):
+    included at a reduced sample weight only if that beats the best
+    home-only configuration by MIN_GAIN_FOR_EXTERNAL.
 
-Honest evaluation (rolling-origin backtest):
-  For each of the last N_BACKTEST_MONTHS home-site months that have
-  enough labeled events: train on every home month BEFORE it (+
-  external data, depending on the config), test ONLY on that unseen
-  home month. External rows are NEVER in any test set. The winner is
-  chosen by pooled backtest accuracy across those months.
+Evaluation (rolling-origin backtest): for each of the last
+N_BACKTEST_MONTHS home months with enough labeled events, train on
+every earlier home month (plus external data, per config) and test on
+that month. External rows are never in a test set. Accuracy is pooled
+across the test months; shuffled CV is reported for reference only, as
+it overstates performance on monthly-batched data.
 
-  Why not just the single latest month (the previous method)? One
-  month is ~35 labeled events -- a single misclassification moves the
-  number ~3 points, so "winner" choice between models within a few
-  points of each other was mostly noise. Pooling 3 unseen months gives
-  ~3x the test events from the same honest procedure. The latest-month
-  number is still reported for continuity.
-
-Also reports device x area combinations (Section: AREA BREAKDOWN)
-since that's a stated requirement -- "which device, in which area, is
-the worst" rather than device alone.
+Also writes the device x area breakdown report.
 """
 import sys
 from pathlib import Path
@@ -65,14 +52,12 @@ logger = logging.getLogger(__name__)
 N_BACKTEST_MONTHS = 3
 MIN_TEST_EVENTS_PER_MONTH = 10
 
-# None = home-site data only. Otherwise the sample weight given to each
-# external (weakly-labeled) row relative to a hand-tagged home row.
+# None = home data only; otherwise the sample weight of each external
+# (keyword-labeled) row relative to a hand-tagged home row.
 EXTERNAL_WEIGHT_OPTIONS = [None, 0.15, 0.4, 1.0]
 
-# An external-data mix is only adopted if it beats the best home-only
-# config by at least this much pooled backtest accuracy. With ~180 test
-# events, one event is ~0.6 points -- smaller "wins" are noise, and noise
-# is not a reason to add a dependency on weakly-labeled external data.
+# Minimum backtest gain required to adopt external data (with ~160 test
+# events, one event is ~0.6 points).
 MIN_GAIN_FOR_EXTERNAL = 0.02
 
 CANDIDATE_MODELS = {
@@ -109,10 +94,8 @@ def get_labeled_data(min_samples_per_class=config.MIN_CLASS_COUNT):
     """Home + external labeled events, with an is_home flag. A class is
     kept if it has >= min_samples_per_class examples across all sites."""
     home = load_master_events()
-    # FIX: rows written by /log_event carry the MODEL'S OWN prediction
-    # as field_device (tag_source='live_prediction'). Training on them
-    # teaches the model to agree with itself and would also leak into
-    # the backtest. Only human/source-tagged labels are training labels.
+    # Rows from /log_event are labeled with the model's own prediction,
+    # so they are not training labels.
     home = home[home["primary_device"].notna() & (home["tag_source"] != "live_prediction")].copy()
     home["is_home"] = True
 
@@ -132,16 +115,15 @@ def get_labeled_data(min_samples_per_class=config.MIN_CLASS_COUNT):
 def get_backtest_months(home_df):
     counts = home_df.groupby("month").size()
     eligible = [m for m in config.sort_months(counts.index) if counts[m] >= MIN_TEST_EVENTS_PER_MONTH]
-    # never backtest on the very first month -- nothing earlier to train on
+    # the first month has nothing earlier to train on
     eligible = eligible[1:]
     return eligible[-N_BACKTEST_MONTHS:]
 
 
 def training_subset(df, ext_weight, before_month=None):
-    """Rows used for training under a given config. If before_month is
-    given, home rows are restricted to strictly earlier months (honest
-    time split). External rows are a different site, so they can't leak
-    home-site test information and are used regardless of date."""
+    """Training rows for a config. With before_month, home rows are
+    restricted to strictly earlier months; external rows (another site)
+    are used regardless of date."""
     home = df[df["is_home"]]
     if before_month is not None:
         key = config.month_sort_key(before_month)
@@ -162,8 +144,7 @@ def fit_predict(model, train_df, weights, test_df):
     X_test = X_test.reindex(columns=X_train.columns, fill_value=0)
     m = _clone(model)
     m.fit(X_train, train_df["primary_device"], sample_weight=weights)
-    # Same rule as the deployed predictor: at the home site, only
-    # predict device classes the home site has actually seen.
+    # As in the deployed predictor: home predictions use home classes only.
     home_classes = set(train_df.loc[train_df["is_home"], "primary_device"])
     proba = restrict_to_classes(m.predict_proba(X_test), m.classes_, home_classes)
     preds = np.asarray(m.classes_, dtype=object)[proba.argmax(axis=1)]
@@ -196,8 +177,8 @@ def backtest(model, df, ext_weight, months):
 
 
 def home_cv(model, df, ext_weight, rule, n_splits=5):
-    """Stratified CV over HOME rows only (external rows, if used, are
-    always in training). Reported for reference -- not the headline."""
+    """Stratified CV over home rows (external rows, if used, always train).
+    Reference only."""
     home = df[df["is_home"]].reset_index(drop=True)
     ext = df[~df["is_home"]]
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
@@ -233,8 +214,7 @@ def compare_all(df, months):
                         f"+explicit-rule={bt[True][0]:.3f}  "
                         f"{ {k: round(v, 3) for k, v in bt[True][1].items()} }  ({time.time() - t0:.0f}s)")
 
-    # Ties break toward the simpler option (rule off, home-only) -- a tie
-    # is not evidence for added complexity.
+    # Ties go to the simpler option (rule off, home-only).
     def key(r):
         return (round(r["backtest_accuracy"], 4), -int(r["explicit_rule"]))
     best_home = max([r for r in results if r["external_weight"] is None], key=key)
@@ -248,15 +228,14 @@ def compare_all(df, months):
                     f"need >= {MIN_GAIN_FOR_EXTERNAL * 100:.0f})")
         if gain >= MIN_GAIN_FOR_EXTERNAL:
             best = best_ext
-    logger.info(f"Winner by pooled honest backtest: {best['model']} on {best['mix']}, "
+    logger.info(f"Winner by pooled backtest: {best['model']} on {best['mix']}, "
                 f"explicit-mention rule={'on' if best['explicit_rule'] else 'off'} "
                 f"({best['backtest_accuracy']:.3f})")
     return best, results
 
 
 def report_area_breakdown(df):
-    """Device x Area cross-tab -- the specific requirement: not just
-    'which device' but 'which device, in which area' is worst."""
+    """Device x area cross-tab by total delay minutes."""
     tagged = df[df["primary_device"].notna() & df["area"].notna()]
     cross = tagged.groupby(["primary_device", "area"]).agg(
         events=("mins", "count"), total_minutes=("mins", "sum"), avg_minutes=("mins", "mean"),
@@ -284,7 +263,7 @@ def train_and_evaluate():
     winner_name, ext_weight, rule = best["model"], best["external_weight"], best["explicit_rule"]
     winner_model = CANDIDATE_MODELS[winner_name]
 
-    # Reports + confusion matrix from the honest backtest predictions.
+    # Reports + confusion matrix from the backtest predictions.
     acc, per_month, y_true, y_pred = backtest(winner_model, df, ext_weight, months)[rule]
     report = classification_report(y_true, y_pred, zero_division=0, output_dict=True)
     pd.DataFrame(report).transpose().to_csv(config.HOLDOUT_REPORT_PATH)
@@ -292,7 +271,7 @@ def train_and_evaluate():
     cm = confusion_matrix(y_true, y_pred, labels=labels)
     plt.figure(figsize=(11, 9))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
-    plt.title(f"Confusion Matrix (honest backtest {months[0]}..{months[-1]}) - {winner_name}")
+    plt.title(f"Confusion Matrix (backtest {months[0]}..{months[-1]}) - {winner_name}")
     plt.tight_layout()
     plt.savefig(config.CONFUSION_MATRIX_PATH, dpi=150)
     plt.close()

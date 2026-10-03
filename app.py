@@ -4,7 +4,7 @@ power-generation fleet insights.
 
 Home site (Combi Mill) endpoints:
   GET  /health                - liveness + model-loaded check
-  GET  /model_info            - manifest: winning model, honest backtest accuracy, classes
+  GET  /model_info            - manifest: winning model, backtest accuracy, classes
   POST /predict               - classify delay text (+ optional area, plant_type), with expected duration
   POST /log_event             - classify AND record as a real, timestamped event
   GET  /stats                 - area-aware Pareto + FMEA fusion + recommendations
@@ -113,9 +113,7 @@ def api_root():
 
 @app.get("/area_risk")
 def area_risk(top_n: int = Query(5, ge=1, le=50)):
-    """Which areas currently carry the most delay -- the 'red zone'
-    areas requested: ranked by total minutes, tagged field-device
-    events only."""
+    """Areas ranked by total field-device delay minutes."""
     df = get_events()
     tagged = df[df["primary_device"].notna() & df["area"].notna()]
     area_totals = tagged.groupby("area").agg(
@@ -128,10 +126,7 @@ def area_risk(top_n: int = Query(5, ge=1, le=50)):
 
 @app.get("/unresolved_hotspots")
 def unresolved_hotspots(top_n: int = Query(5, ge=1, le=20)):
-    """Which areas carry the most delay minutes that ISN'T yet resolved
-    to a specific field device -- turns the coverage gap into an
-    actionable target (investigate these areas' logging/tagging) rather
-    than a caveat about the dashboard's own limitations."""
+    """Areas ranked by delay minutes not yet attributed to a field device."""
     df = get_events()
     unresolved = df[df["primary_device"].isna() & df["area"].notna()]
     hotspots = unresolved.groupby("area").agg(
@@ -142,13 +137,7 @@ def unresolved_hotspots(top_n: int = Query(5, ge=1, le=20)):
 
 @app.get("/review_queue")
 def review_queue(limit: int = Query(50, ge=1, le=500)):
-    """Individual unresolved delay events, ranked by minutes (highest
-    impact first) -- a queue for a human to review and manually tag.
-
-    FIX: confirmed via production traceback that 9 rows have NaN date
-    and 2 rows have NaN reason_text among unresolved delays -- NaN is
-    not valid JSON. fillna() covers every returned column.
-    """
+    """Unresolved delays ranked by minutes, for manual tagging."""
     df = get_events()
     unresolved = df[df["primary_device"].isna()].copy()
     unresolved = unresolved.sort_values("mins", ascending=False).head(limit)
@@ -191,13 +180,8 @@ def predict(req: PredictRequest):
 
 @app.post("/log_event")
 def log_event(req: PredictRequest):
-    """Classify AND record as a real event with a server timestamp --
-    appends to master_events.csv and invalidates the cache so /stats,
-    /forecast, and /events reflect it on the very next call.
-
-    NOTE: rows written here are tagged tag_source='live_prediction' and
-    are deliberately EXCLUDED from training (their label is the model's
-    own guess, not a human's)."""
+    """Classify and append to master_events.csv. These rows are tagged
+    tag_source='live_prediction' and excluded from training."""
     predictor = get_predictor_safe()
     now = datetime.now()
     result = predictor.predict(req.reason_text, area=req.area)
@@ -228,11 +212,8 @@ def log_event(req: PredictRequest):
 
 
 # ------------------------------------------------------ Shadow-mode --
-# Records the model's prediction and a maintenance reviewer's independent
-# actual diagnosis for the SAME real delay, so agreement rate can be
-# measured before this system drives unsupervised maintenance decisions.
-# Two-step, deliberately: the prediction is logged blind (shadow_predict),
-# then the reviewer's real finding is recorded separately (shadow_resolve).
+# The prediction is logged first without being shown; the reviewer's
+# independent diagnosis is recorded separately, then compared.
 
 class ShadowPredictRequest(BaseModel):
     reason_text: str = Field(..., min_length=3, max_length=2000)
@@ -258,16 +239,13 @@ def _load_shadow_log() -> pd.DataFrame:
 
 
 def _is_resolved(log: pd.DataFrame) -> pd.Series:
-    """FIX: the old check was `log['resolved_at'] != ''`, but pandas
-    reads empty CSV cells back as NaN, and NaN != '' is True -- so every
-    PENDING entry was counted as resolved (and as a disagreement)."""
+    """Empty CSV cells read back as NaN, so check for a real value."""
     return log["resolved_at"].notna() & (log["resolved_at"].astype(str).str.strip() != "")
 
 
 @app.post("/shadow_predict")
 def shadow_predict(req: ShadowPredictRequest):
-    """Step 1: log the model's prediction for a real delay, without
-    revealing it to the reviewer yet."""
+    """Step 1: record the model's prediction without revealing it."""
     predictor = get_predictor_safe()
     now = datetime.now()
     result = predictor.predict(req.reason_text, area=req.area)
@@ -287,7 +265,6 @@ def shadow_predict(req: ShadowPredictRequest):
     log = pd.concat([log, pd.DataFrame([new_row])], ignore_index=True)
     log.to_csv(config.SHADOW_LOG_PATH, index=False)
 
-    # Deliberately does NOT return the prediction in this response.
     return {"shadow_id": shadow_id, "logged": True,
             "message": "Prediction recorded. Determine the actual cause independently, then submit via /shadow_resolve."}
 
@@ -307,8 +284,7 @@ def shadow_resolve(req: ShadowResolveRequest):
     actual = req.actual_device.upper().strip()
     agreement = predicted == actual
 
-    # Writing a string into a column pandas inferred as float64 (all
-    # empty) raises LossySetitemError -- cast to object first.
+    # All-empty columns are read as float64; cast before writing strings.
     for col in ("actual_device", "resolved_at", "reviewer_note", "agreement"):
         log[col] = log[col].astype(object)
 
@@ -329,9 +305,7 @@ def shadow_resolve(req: ShadowResolveRequest):
 
 @app.get("/shadow_stats")
 def shadow_stats():
-    """Running agreement rate across all resolved shadow-mode entries --
-    the core metric for deciding whether this system is ready to drive
-    unsupervised decisions."""
+    """Agreement rate over resolved shadow-mode entries, overall and per device."""
     log = _load_shadow_log()
     resolved_mask = _is_resolved(log)
     resolved = log[resolved_mask].copy()
@@ -361,9 +335,8 @@ def stats():
     df = get_events()
     tagged = df[df["primary_device"].notna()]
 
-    # Devices below MIN_CLASS_COUNT are shown separately ("low_sample")
-    # and never used for Top Contributor rankings -- one event's average
-    # is not a meaningful severity signal.
+    # Devices below MIN_CLASS_COUNT are listed separately and excluded
+    # from the top-contributor rankings.
     device_counts = tagged["primary_device"].value_counts()
     reliable_devices = device_counts[device_counts >= config.MIN_CLASS_COUNT].index
     low_sample_devices = device_counts[device_counts < config.MIN_CLASS_COUNT].index
@@ -423,7 +396,7 @@ def stats():
 
 @app.get("/device_area_breakdown")
 def device_area_breakdown(top_n: int = Query(20, ge=1, le=200)):
-    """Device x Area cross-tab -- 'which device, in which area, is worst'."""
+    """Device x area cross-tab by total delay minutes."""
     df = get_events()
     tagged = df[df["primary_device"].notna() & df["area"].notna()]
     cross = tagged.groupby(["primary_device", "area"]).agg(
@@ -496,10 +469,8 @@ def devices():
 
 @app.get("/health_score")
 def health_score(top_n: int = Query(10, ge=1, le=50)):
-    """Device x area recurrence risk ranking. Always returns the simple,
-    explainable health score. Also attempts the Cox survival model if
-    lifelines is installed and there's enough data -- if not, this is
-    disclosed explicitly rather than silently omitted."""
+    """Device x area recurrence-risk ranking, plus the Cox model's 14-day
+    recurrence probability when it can be fit."""
     df = _load_events_for_health_score()
     df = build_recurrence_features(df)
 
@@ -586,6 +557,6 @@ def power_plants(country: Optional[str] = Query(None, description="ISO3 code, e.
     return fleet_insights.power_plants_summary(country, top_n)
 
 
-# Dashboard -- mounted LAST so every API route above takes precedence.
+# Dashboard, mounted last so the API routes take precedence.
 if FRONTEND_DIR.exists():
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
