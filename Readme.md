@@ -56,7 +56,8 @@ uvicorn app:app --reload --port 8000
 Open http://127.0.0.1:8000/ for the dashboard and /docs for the API.
 
 ## Deploy
-Render Blueprint (`render.yaml`): New → Blueprint → select this repo.
+Free Hugging Face Space: `hf auth login` once, then `python deploy_hf.py`.
+(Render Blueprint via `render.yaml` also works.)
 See DEPLOYMENT.md.
 
 ## Data sources & licences
