@@ -1,8 +1,16 @@
 {
-  "trained_at": "2026-07-17T14:01:59.736874",
-  "winner_model": "random_forest",
-  "n_features": 241,
-  "n_samples": 346,
+  "trained_at": "2026-10-03T14:12:50.007043",
+  "winner_model": "logistic_regression",
+  "training_data_mix": "home_only",
+  "external_sample_weight": null,
+  "explicit_mention_rule": true,
+  "explicit_rule_coverage": 0.2907,
+  "explicit_rule_precision": 0.94,
+  "min_gain_required_for_external_data": 0.02,
+  "n_features": 654,
+  "n_samples": 344,
+  "n_home_samples": 344,
+  "n_external_samples": 0,
   "n_classes": 8,
   "classes": [
     "ENCODER",
@@ -14,25 +22,384 @@
     "PRESSURE_SWITCH",
     "PROXIMITY"
   ],
+  "home_classes": [
+    "ENCODER",
+    "FLOW_SWITCH",
+    "HMD",
+    "LASER",
+    "LVDT",
+    "PHOTOCELL",
+    "PRESSURE_SWITCH",
+    "PROXIMITY"
+  ],
+  "evaluation": "rolling-origin backtest on home-site months (train strictly before, test on unseen month)",
+  "backtest_months": [
+    "Mar-26",
+    "Apr-26",
+    "May-26"
+  ],
+  "backtest_n_test_events": 161,
+  "backtest_accuracy": 0.6273,
+  "backtest_per_month": {
+    "Mar-26": 0.7778,
+    "Apr-26": 0.5607,
+    "May-26": 0.75
+  },
   "holdout_month": "May-26",
-  "holdout_accuracy": 0.6944444444444444,
-  "cv_accuracy": 0.7658959537572254,
-  "all_candidates": {
-    "random_forest": {
-      "cv_accuracy": 0.7659,
-      "holdout_accuracy": 0.6944
+  "holdout_accuracy": 0.75,
+  "cv_accuracy": 0.7849,
+  "all_candidates": [
+    {
+      "model": "catboost",
+      "mix": "home+external(w=0.15)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.6398,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.5981,
+        "May-26": 0.6944
+      }
     },
-    "hist_gradient_boosting": {
-      "cv_accuracy": 0.6705,
-      "holdout_accuracy": 0.5556
+    {
+      "model": "logistic_regression",
+      "mix": "home_only",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.6273,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.5607,
+        "May-26": 0.75
+      }
     },
-    "logistic_regression": {
-      "cv_accuracy": 0.7254,
-      "holdout_accuracy": 0.6667
+    {
+      "model": "catboost",
+      "mix": "home_only",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.6273,
+      "per_month": {
+        "Mar-26": 0.8333,
+        "Apr-26": 0.5794,
+        "May-26": 0.6667
+      }
     },
-    "catboost": {
-      "cv_accuracy": 0.7399,
-      "holdout_accuracy": 0.6667
+    {
+      "model": "logistic_regression",
+      "mix": "home+external(w=0.15)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.6273,
+      "per_month": {
+        "Mar-26": 0.8333,
+        "Apr-26": 0.5514,
+        "May-26": 0.75
+      }
+    },
+    {
+      "model": "random_forest",
+      "mix": "home+external(w=0.4)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.6211,
+      "per_month": {
+        "Mar-26": 0.8889,
+        "Apr-26": 0.5607,
+        "May-26": 0.6667
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "mix": "home+external(w=0.4)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.6211,
+      "per_month": {
+        "Mar-26": 0.8333,
+        "Apr-26": 0.5421,
+        "May-26": 0.75
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "mix": "home+external(w=1.0)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.6211,
+      "per_month": {
+        "Mar-26": 0.8333,
+        "Apr-26": 0.5421,
+        "May-26": 0.75
+      }
+    },
+    {
+      "model": "catboost",
+      "mix": "home+external(w=1.0)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.6211,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.5701,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "catboost",
+      "mix": "home+external(w=0.4)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.6149,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.5607,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "catboost",
+      "mix": "home+external(w=0.15)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.6087,
+      "per_month": {
+        "Mar-26": 0.6667,
+        "Apr-26": 0.5701,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "catboost",
+      "mix": "home_only",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.6025,
+      "per_month": {
+        "Mar-26": 0.7222,
+        "Apr-26": 0.5607,
+        "May-26": 0.6667
+      }
+    },
+    {
+      "model": "random_forest",
+      "mix": "home+external(w=0.4)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.6025,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.5514,
+        "May-26": 0.6667
+      }
+    },
+    {
+      "model": "random_forest",
+      "mix": "home_only",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.5963,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.5421,
+        "May-26": 0.6667
+      }
+    },
+    {
+      "model": "random_forest",
+      "mix": "home+external(w=1.0)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.5963,
+      "per_month": {
+        "Mar-26": 0.8889,
+        "Apr-26": 0.5327,
+        "May-26": 0.6389
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "mix": "home_only",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5901,
+      "per_month": {
+        "Mar-26": 0.7222,
+        "Apr-26": 0.514,
+        "May-26": 0.75
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "mix": "home+external(w=0.15)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5901,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.5047,
+        "May-26": 0.75
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "mix": "home+external(w=0.4)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5839,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.4953,
+        "May-26": 0.75
+      }
+    },
+    {
+      "model": "catboost",
+      "mix": "home+external(w=0.4)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5839,
+      "per_month": {
+        "Mar-26": 0.6667,
+        "Apr-26": 0.5327,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "mix": "home+external(w=1.0)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5839,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.4953,
+        "May-26": 0.75
+      }
+    },
+    {
+      "model": "catboost",
+      "mix": "home+external(w=1.0)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5839,
+      "per_month": {
+        "Mar-26": 0.6667,
+        "Apr-26": 0.5327,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "random_forest",
+      "mix": "home_only",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5776,
+      "per_month": {
+        "Mar-26": 0.6667,
+        "Apr-26": 0.5327,
+        "May-26": 0.6667
+      }
+    },
+    {
+      "model": "random_forest",
+      "mix": "home+external(w=1.0)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5776,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.5234,
+        "May-26": 0.6389
+      }
+    },
+    {
+      "model": "random_forest",
+      "mix": "home+external(w=0.15)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.5652,
+      "per_month": {
+        "Mar-26": 0.8889,
+        "Apr-26": 0.4673,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "mix": "home_only",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.559,
+      "per_month": {
+        "Mar-26": 0.7222,
+        "Apr-26": 0.486,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "random_forest",
+      "mix": "home+external(w=0.15)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5466,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.4579,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "mix": "home+external(w=0.15)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.5404,
+      "per_month": {
+        "Mar-26": 0.7222,
+        "Apr-26": 0.4579,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "mix": "home+external(w=1.0)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.5404,
+      "per_month": {
+        "Mar-26": 0.7222,
+        "Apr-26": 0.4393,
+        "May-26": 0.75
+      }
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "mix": "home+external(w=0.4)",
+      "explicit_rule": true,
+      "backtest_accuracy": 0.528,
+      "per_month": {
+        "Mar-26": 0.7778,
+        "Apr-26": 0.4299,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "mix": "home_only",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.5155,
+      "per_month": {
+        "Mar-26": 0.6111,
+        "Apr-26": 0.4579,
+        "May-26": 0.6389
+      }
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "mix": "home+external(w=1.0)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.4845,
+      "per_month": {
+        "Mar-26": 0.6111,
+        "Apr-26": 0.3738,
+        "May-26": 0.75
+      }
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "mix": "home+external(w=0.15)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.472,
+      "per_month": {
+        "Mar-26": 0.6111,
+        "Apr-26": 0.3738,
+        "May-26": 0.6944
+      }
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "mix": "home+external(w=0.4)",
+      "explicit_rule": false,
+      "backtest_accuracy": 0.472,
+      "per_month": {
+        "Mar-26": 0.6667,
+        "Apr-26": 0.3645,
+        "May-26": 0.6944
+      }
     }
-  }
+  ]
 }

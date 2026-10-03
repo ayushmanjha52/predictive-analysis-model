@@ -55,6 +55,12 @@ def _load_manifest():
     return json.load(open(path)) if path.exists() else None
 
 
+def _honest_metric(manifest):
+    """Pooled multi-month backtest accuracy (train.py v3+), falling back
+    to the single-month holdout for manifests written by older versions."""
+    return manifest.get("backtest_accuracy", manifest.get("holdout_accuracy"))
+
+
 def _archive_current_artifacts(timestamp):
     """Snapshot the artifacts that were deployed BEFORE this retrain,
     so there's always a way back if the new model regresses."""
@@ -94,7 +100,7 @@ def retrain_model(allow_regression=False):
         # for both, every single time, making the regression guard a
         # no-op that never actually compared anything.
         previous_winner = previous_manifest.get("winner_model")
-        previous_holdout = previous_manifest.get("holdout_accuracy")
+        previous_holdout = _honest_metric(previous_manifest)
         logger.info(f"Currently deployed model: {previous_winner}  "
                     f"(honest holdout accuracy: {previous_holdout})")
     else:
@@ -128,7 +134,7 @@ def retrain_model(allow_regression=False):
         return
 
     new_winner = new_manifest.get("winner_model")
-    new_holdout = new_manifest.get("holdout_accuracy")
+    new_holdout = _honest_metric(new_manifest)
     logger.info(f"New model after retraining: {new_winner}  "
                 f"(honest holdout accuracy: {new_holdout})")
 

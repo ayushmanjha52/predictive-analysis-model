@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Runtime / training byproducts
+logs/
+catboost_info/
+.pytest_cache/
+
+# Raw NRC scrape cache (~MBs, regenerable with `python src/external_data.py`).
+# The processed data/external/external_events.csv.gz IS committed -- the
+# deployed app needs it.
+data/external/nrc_events_raw.csv.gz
+data/external/nrc_days_done.txt
