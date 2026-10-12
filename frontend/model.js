@@ -1,4 +1,4 @@
-// In-browser delay classifier for the static (GitHub Pages) build.
+// In-browser delay classifier for the static build.
 // Mirrors src/feature_engineering.py + src/predict.py exactly:
 // TF-IDF (word 1-2 grams + char_wb 3-5 grams, sublinear tf, l2 per
 // block), keyword flags, area / plant-type one-hot, logistic regression,

@@ -1,6 +1,6 @@
 // Dashboard logic: renders the Industry Mill, Power Fleet and Global Power
 // Plants tabs. Talks to the FastAPI backend (app.py), or -- in the static
-// GitHub Pages build (window.PDM_STATIC) -- reads pre-rendered JSON from
+// static build (window.PDM_STATIC) -- reads pre-rendered JSON from
 // api/ and classifies delays in the browser with model.js.
 
 const state = { stats: null };
