@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Device Reliability</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <p class="brand-eyebrow"><span class="dot"></span>Industry Mill &middot; Field-Device Reliability</p>
+    <h1 class="brand-title">Why field devices stop the mill, and <em>what to fix first.</em></h1>
+    <p class="brand-sub">Delay-log analytics and a cause classifier for the Industry Mill, benchmarked against every reported event at US power reactors and 35,000 power plants worldwide.</p>
+  </div>
+  <div class="brand-meta">
+    <span>Classifier backtest <b id="metaAccuracy">—</b></span>
+    <span id="metaModel">&nbsp;</span>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab-btn active" data-tab="tab-mill" role="tab"><span class="num">01</span>Industry Mill</button>
+  <button class="tab-btn" data-tab="tab-fleet" role="tab"><span class="num">02</span>Power Fleet</button>
+  <button class="tab-btn" data-tab="tab-plants" role="tab"><span class="num">03</span>Global Plants</button>
+</nav>
+
+<main class="page">
+<div class="tab-pane active" id="tab-mill">
+
+  <section class="kpi-grid">
+    <div class="kpi-card c-accent">
+      <p class="kpi-label">Total Field-Device Delay</p>
+      <p class="kpi-value" id="kpiTotalMinutes">—</p>
+      <p class="kpi-foot" id="kpiTotalMinutesFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card">
+      <p class="kpi-label">Devices Monitored</p>
+      <p class="kpi-value" id="kpiTaggedEvents">—</p>
+      <p class="kpi-foot" id="kpiTaggedEventsFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card">
+      <p class="kpi-label">Top Contributor (Volume)</p>
+      <p class="kpi-value small" id="kpiTopVolume">—</p>
+      <p class="kpi-foot" id="kpiTopVolumeFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card">
+      <p class="kpi-label">Top Contributor (Severity)</p>
+      <p class="kpi-value small" id="kpiTopSeverity">—</p>
+      <p class="kpi-foot" id="kpiTopSeverityFoot">&nbsp;</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Alerts &amp; Findings</h2>
+    </div>
+    <div id="alertsContainer">
+      <div class="alert info"><p class="alert-title">Loading findings…</p></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Monthly Trend</h2>
+      <span class="panel-note">Top 5 devices &middot; delay-minutes per month</span>
+    </div>
+    <canvas id="trendChart" height="110"></canvas>
+  </section>
+
+  <div class="two-col">
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Delay Share by Device</h2>
+        <span class="panel-note">Total minutes, all months</span>
+      </div>
+      <div id="paretoBars"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Predicted Delay Share — Next 6 Months</h2>
+        <span class="panel-note">Which device is expected to cause the most delay, by % share</span>
+      </div>
+      <div id="forecastBars"></div>
+      <p class="panel-footnote" id="forecastFootnote">&nbsp;</p>
+
+      <div class="forecast-check-row">
+        <select id="forecastDeviceSelect" title="Choose a device" aria-label="Choose a device"></select>
+        <button class="btn-check" id="checkForecastBtn">Check 6-Month Forecast</button>
+      </div>
+      <div id="forecastCheckResult" class="forecast-check-result"></div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Red-Zone Areas</h2>
+      <span class="panel-note">Which areas carry the most delay right now, by % share</span>
+    </div>
+    <div id="areaRiskBars"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Untagged Delay Review Queue</h2>
+      <span class="panel-note" id="reviewQueueNote">Highest-impact unresolved delays first</span>
+    </div>
+    <div class="scroll-x">
+      <table class="log-table">
+        <thead><tr><th>Date</th><th>Area</th><th>Minutes</th><th>Reason</th></tr></thead>
+        <tbody id="reviewQueueBody"><tr><td colspan="4" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Shadow-Mode Validation</h2>
+      <span class="panel-note">Predicted vs. actual agreement — the basis for trusting this system with real decisions</span>
+    </div>
+    <div id="shadowStatsBody">Loading…</div>
+  </section>
+
+  <!-- Step 1 records the prediction without showing it; step 2 reveals
+       it only after the reviewer records their own diagnosis. -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Shadow-Mode Review</h2>
+      <span class="panel-note">Log a real delay, diagnose it yourself, then see if the model agreed</span>
+    </div>
+
+    <div id="shadowStep1">
+      <label class="field-label" for="shadowReasonInput">Delay description</label>
+      <textarea id="shadowReasonInput" placeholder="e.g. Bundling area photocell 1,2 & 3 not working"></textarea>
+
+      <div class="mins-row">
+        <div class="field">
+          <label class="field-label" for="shadowAreaInput">Area (optional)</label>
+          <select id="shadowAreaInput"><option value="">Unknown / not specified</option></select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="shadowMinsInput">Duration (minutes, optional)</label>
+          <input type="number" id="shadowMinsInput" min="0" placeholder="e.g. 25">
+        </div>
+      </div>
+
+      <button class="btn-run btn-run-inline mt-16" id="shadowLogBtn">Log This Delay</button>
+      <div id="shadowStep1Error"></div>
+    </div>
+
+    <div id="shadowStep2" class="shadow-step2-hidden">
+      <p class="panel-note mb-12">Logged. Now diagnose the delay yourself — as you normally would — then record what you actually found. The model's prediction stays hidden until you submit this.</p>
+
+      <label class="field-label" for="shadowActualSelect">What did you actually find caused this delay?</label>
+      <select id="shadowActualSelect"></select>
+
+      <label class="field-label mt-14" for="shadowNoteInput">Note (optional)</label>
+      <textarea id="shadowNoteInput" placeholder="Any extra detail about the diagnosis"></textarea>
+
+      <button class="btn-run btn-run-accent btn-run-inline mt-16" id="shadowResolveBtn">Record My Finding &amp; Compare</button>
+      <div id="shadowStep2Error"></div>
+    </div>
+
+    <div id="shadowResultBlock" class="result-block">
+      <div class="result-device-row">
+        <span class="result-device-dot" id="shadowResultDot"></span>
+        <span class="result-device-name" id="shadowResultOutcome">—</span>
+      </div>
+      <p class="result-conf">Model predicted <span class="mono" id="shadowResultPredicted">—</span> · You found <span class="mono" id="shadowResultActual">—</span></p>
+      <button class="btn-run btn-run-inline mt-14" id="shadowNewReviewBtn">Review Another Delay</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Device Health Score — Recurrence Risk</h2>
+      <span class="panel-note">Which device + area combinations are most likely to fail again soon</span>
+    </div>
+    <div id="healthScoreNote" class="alert info mb-12" hidden>
+      <p class="alert-body" id="healthScoreNoteText"></p>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead>
+          <tr>
+            <th>Device</th><th>Area</th><th>Health Score</th>
+            <th>Days Since Last Event</th><th>Events (Last 90d)</th>
+            <th>Total Events</th><th>14-Day Recurrence % (if available)</th>
+          </tr>
+        </thead>
+        <tbody id="healthScoreBody"><tr><td colspan="7" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Device &times; Area Breakdown</h2>
+      <span class="panel-note">Which device, in which area, drives the most delay</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Device</th><th>Area</th><th>Total Min</th><th>Avg Min/Event</th><th>Events</th></tr></thead>
+        <tbody id="areaTableBody"><tr><td colspan="5" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Severity vs. Frequency vs. FMEA Risk — Field Devices</h2>
+      <span class="panel-note">Total volume &ne; per-incident severity — both matter, for different reasons</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Device</th><th>Avg Min/Event</th><th>Max Single Event</th><th>Events</th><th>FMEA Risk</th><th>Recommendation</th></tr></thead>
+        <tbody id="sevTableBody"><tr><td colspan="6" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Other Devices — Low Sample Size</h2>
+      <span class="panel-note">Fewer than 5 recorded events — shown for reference, excluded from rankings above</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Device</th><th>Avg Min/Event</th><th>Max Single Event</th><th>Events</th><th>FMEA Risk</th></tr></thead>
+        <tbody id="lowSampleTableBody"><tr><td colspan="5" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- ============================ POWER FLEET ============================ -->
+<div class="tab-pane" id="tab-fleet">
+  <p class="section-intro">
+    The same field devices that delay the Industry Mill also fail across the power-generation fleet.
+    This tab mines <b>every US NRC power-reactor event report</b> (public, plant-written narratives)
+    for which field devices failed, <b>what actually went wrong</b>, and how often it tripped the unit.
+    These insights are used both here and as extra training data for the delay classifier.
+  </p>
+
+  <section class="kpi-grid">
+    <div class="kpi-card c-accent">
+      <p class="kpi-label">Fleet Events Analysed</p>
+      <p class="kpi-value" id="fleetKpiEvents">—</p>
+      <p class="kpi-foot" id="fleetKpiEventsFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card">
+      <p class="kpi-label">Field-Device Failures</p>
+      <p class="kpi-value" id="fleetKpiDevice">—</p>
+      <p class="kpi-foot" id="fleetKpiDeviceFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card">
+      <p class="kpi-label">Power Plants Covered</p>
+      <p class="kpi-value" id="fleetKpiPlants">—</p>
+      <p class="kpi-foot" id="fleetKpiPlantsFoot">&nbsp;</p>
+    </div>
+    <div class="kpi-card">
+      <p class="kpi-label">Grid / Offsite-Power Events</p>
+      <p class="kpi-value" id="fleetKpiGrid">—</p>
+      <p class="kpi-foot" id="fleetKpiGridFoot">&nbsp;</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Cross-Site Lessons for the Industry Mill</h2>
+      <span class="panel-note">Devices tracked at the mill that also fail in power plants: real failure modes &amp; what to check first</span>
+    </div>
+    <div class="lesson-grid" id="lessonGrid"><p class="text-dim">Loading…</p></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Device Ranking — Industry Mill vs. Power Fleet</h2>
+      <span class="panel-note">Trip rate = share of fleet failures that tripped the reactor/turbine (objective severity)</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Device</th><th>Fleet Events</th><th>Plants Affected</th><th>Trip Rate</th><th>Avg Power Lost</th><th>Mill Events</th><th>Mill Minutes</th></tr></thead>
+        <tbody id="fleetRankBody"><tr><td colspan="7" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="source-note" id="fleetLabelNote"></p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Fleet Trend by Year</h2>
+      <span class="panel-note">Reported events, unit trips and grid events per year across all US power reactors</span>
+    </div>
+    <canvas id="fleetTrendChart" height="110"></canvas>
+    <p class="source-note" id="fleetTrendNote"></p>
+  </section>
+
+  <div class="two-col">
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Power Grid / Offsite-Power Events</h2>
+        <span class="panel-note" id="gridNote">What causes grid-related events at power plants</span>
+      </div>
+      <div id="gridCauseBars"></div>
+      <p class="source-note" id="gridFootnote"></p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Plants Most Affected by Grid Events</h2>
+        <span class="panel-note">Count of grid / offsite-power events</span>
+      </div>
+      <div class="scroll-x">
+        <table class="sev-table">
+          <thead><tr><th>Plant</th><th>State</th><th>Events</th><th>Trips</th></tr></thead>
+          <tbody id="gridPlantsBody"><tr><td colspan="4" class="text-dim">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Plants with the Most Unit Trips (normalized per GW)</h2>
+      <span class="panel-note">Reactor/turbine trips per GW of installed capacity, so large sites aren't ranked worst just for being large</span>
+    </div>
+    <div class="scroll-x">
+      <table class="sev-table">
+        <thead><tr><th>Plant</th><th>State</th><th>Capacity</th><th>Events</th><th>Trips</th><th>Trips / GW</th></tr></thead>
+        <tbody id="plantRelBody"><tr><td colspan="6" class="text-dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="source-note" id="plantRelNote"></p>
+  </section>
+</div>
+
+<!-- ========================== GLOBAL PLANTS =========================== -->
+<div class="tab-pane" id="tab-plants">
+  <p class="section-intro">
+    The global installed base of power generation, from the <b>WRI Global Power Plant Database</b>
+    (about 35,000 plants in 167 countries). It shows where the field-device population lives, by fuel and country.
+  </p>
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title" id="plantsTitle">Installed Capacity by Fuel</h2>
+      <select id="countrySelect" class="select-inline" aria-label="Country">
+        <option value="">World</option>
+        <option value="IND">India</option>
+        <option value="USA">United States</option>
+        <option value="CHN">China</option>
+        <option value="JPN">Japan</option>
+        <option value="DEU">Germany</option>
+        <option value="GBR">United Kingdom</option>
+        <option value="FRA">France</option>
+        <option value="BRA">Brazil</option>
+        <option value="RUS">Russia</option>
+        <option value="AUS">Australia</option>
+      </select>
+    </div>
+    <section class="kpi-grid">
+      <div class="kpi-card c-accent"><p class="kpi-label">Plants</p><p class="kpi-value" id="plantsKpiCount">—</p></div>
+      <div class="kpi-card"><p class="kpi-label">Capacity</p><p class="kpi-value" id="plantsKpiGw">—</p></div>
+      <div class="kpi-card"><p class="kpi-label">Largest Fuel</p><p class="kpi-value small" id="plantsKpiFuel">—</p></div>
+      <div class="kpi-card"><p class="kpi-label">Fuel Types</p><p class="kpi-value" id="plantsKpiFuels">—</p></div>
+    </section>
+    <div id="fuelBars"></div>
+  </section>
+
+  <div class="two-col">
+    <section class="panel">
+      <div class="panel-head"><h2 class="panel-title">Largest Plants</h2></div>
+      <div class="scroll-x">
+        <table class="sev-table">
+          <thead><tr><th>Plant</th><th>Country</th><th>Fuel</th><th>MW</th></tr></thead>
+          <tbody id="largestPlantsBody"><tr><td colspan="4" class="text-dim">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="panel" id="topCountriesPanel">
+      <div class="panel-head"><h2 class="panel-title">Top Countries by Capacity</h2></div>
+      <div id="countryBars"></div>
+    </section>
+  </div>
+  <p class="source-note">Source: World Resources Institute, Global Power Plant Database v1.3 (CC BY 4.0). Capacity is nameplate MW.</p>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <span>Built by Ayushman Jha</span>
+  <span>Data: Industry Mill delay log &middot; US NRC event reports &middot; WRI Global Power Plant Database</span>
+</footer>
+
+<script>window.PDM_STATIC = true;</script>
+<script src="config.js"></script>
+<script src="model.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
