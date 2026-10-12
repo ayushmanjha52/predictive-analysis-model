@@ -1,60 +1,45 @@
 # Deployment
 
-The API and the dashboard are **one service**: `app.py` serves the
-dashboard (`frontend/`) at `/` and the JSON API on the other routes.
-The browser calls the API on the same origin, so no URL or CORS
-editing is needed.
+## Public site: GitHub Pages (free, always on)
 
-## Render (recommended, free)
+Live at https://ayushmanjha52.github.io/predictive-analysis-model/
 
-1. Push this repo to GitHub (already wired: `render.yaml` is at the repo root).
-2. In the Render dashboard: **New → Blueprint**, then select the repository.
-   Render reads `render.yaml` and creates the `field-device-pdm` web service:
-   - build: `pip install -r requirements.txt`
-   - start: `uvicorn app:app --host 0.0.0.0 --port $PORT`
-   - health check: `/health`
-   - Python 3.13.1 (pinned via `PYTHON_VERSION`, matching the version the
-     models were trained with)
-3. When the deploy finishes, open `https://<service-name>.onrender.com/`.
-   The API docs are at `/docs`.
+The public site is static, so there is no server to keep running:
+- `src/build_site.py` renders every dashboard view through the real
+  FastAPI app into `site/api/*.json`. It also exports the classifier to
+  `site/model.json`, which `frontend/model.js` runs in the browser.
+- `src/publish_site.py` pushes `site/` to the `gh-pages` branch, which
+  GitHub Pages serves.
 
-Every push to `main` redeploys automatically (`autoDeploy: true`).
+To update the site after new data or a retrain:
+```
+python src/build_site.py
+python src/publish_site.py
+```
+Pages refreshes within a minute or two. In the repo settings,
+**Settings → Pages** should show source "Deploy from a branch", with
+`gh-pages` and `/ (root)`.
 
-### Things to know about the free plan
-- **The service sleeps after ~15 min idle**, and the first request after
-  that takes about a minute to wake it.
-- **The filesystem is ephemeral.** Events written through `/log_event`
-  and shadow-mode entries (`/shadow_predict`, `/shadow_resolve`) are
-  stored in CSV files. On Render they are **lost on every redeploy or
-  restart**. For real shadow-mode validation, do one of these:
-  - attach a Render persistent disk (paid plan) mounted at e.g.
-    `/var/data`, and set the env var `PDM_DATA_DIR=/var/data`. On first
-    start the app seeds the disk from the repo's `data/` folder. After
-    that, logged events and shadow entries survive redeploys. The public
-    reference data in `data/external/` is refreshed from the repo on
-    every deploy; or
-  - run shadow mode on an always-on plant server instead (below).
-- The model is **not** retrained on Render. Train locally, commit
-  `models/`, and push.
+On the static site, shadow-mode reviews are saved in each reviewer's own
+browser (localStorage), not in a shared log.
 
-## Plant network server (alternative)
+The in-browser model supports linear models (the current logistic
+regression). If a retrain selects a tree model, `build_site.py` stops
+with a clear message.
 
+## Plant network server (full backend)
+
+For a shared shadow-mode log and `/log_event` writes, run the API:
 ```
 pip install -r requirements.txt
 uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 Run it as a service (NSSM on Windows, systemd on Linux) so it restarts
-on reboot. Open port 8000 in the firewall. If a frontend on a
-*different* origin needs the API, set
-`PDM_CORS_ORIGINS=http://that-host:port` (never `*`).
+on reboot, and open port 8000 in the firewall. `app.py` serves the
+dashboard at `/` and the API docs at `/docs`. Set `PDM_DATA_DIR` to keep
+the writable logs on a persistent path. If a frontend on a different
+origin needs the API, set `PDM_CORS_ORIGINS=http://that-host:port`
+(never `*`).
 
-## Updating the deployed model
-```
-python src/external_data.py   # optional: refresh public power-plant data
-python src/train.py           # or: python retrain_model.py (adds a regression guard)
-python -m pytest tests/test_all.py
-git add models/ reports/ data/external/external_events.csv.gz && git commit && git push
-```
-`requirements.txt` pins scikit-learn, CatBoost and numpy to the versions
-the committed model files were trained with. If you upgrade any of them
-locally, retrain before pushing.
+`requirements.txt` pins scikit-learn and numpy to the versions the
+committed model files were trained with. Retrain before upgrading them.

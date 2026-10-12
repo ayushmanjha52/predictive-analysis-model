@@ -56,7 +56,7 @@ named device matches the human label 94% of the time.
 
 ### On "more data": what the power-plant data did and did not do
 More *relevant labeled* data is what improves a classifier. The public
-NRC power-reactor reports added about 3,900 real events, but plant staff
+NRC power-reactor reports added about 4,800 real events (2012 onward), but plant staff
 rarely name a specific sensor in them. Only about 1–2% of events name
 exactly one field-device class, and most of those are classes the mill
 doesn't have (transmitters, level switches). Training with them gave a
@@ -114,8 +114,8 @@ descriptions too vague to tag.
 Shadow mode (`/shadow_predict`, `/shadow_resolve`, dashboard form) is
 operational, with 1 resolved entry so far. Do not use this model for
 unsupervised maintenance decisions until meaningful shadow-mode data
-exists. **On Render's free plan, shadow entries are lost on redeploy**
-(see DEPLOYMENT.md for a persistent disk).
+exists. On the public site, shadow reviews are stored in the reviewer's
+own browser; a plant-server deployment (DEPLOYMENT.md) keeps a shared log.
 
 ## Intended use
 Prioritization and diagnostic support for field-device maintenance at

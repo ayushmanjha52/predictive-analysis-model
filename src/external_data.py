@@ -242,20 +242,29 @@ def fetch_nrc_events(start: dt.date, end: dt.date, workers: int = 2, delay: floa
                     backoff["until"] = time.time() + backoff["secs"]
                     backoff["secs"] = min(backoff["secs"] * 2, 900)
 
-    n = 0
-    with ThreadPoolExecutor(max_workers=workers) as pool, open(NRC_DAYS_DONE_PATH, "a") as done_f:
+    def checkpoint(pending_days):
+        # Events first, then the days they came from, so an interrupted
+        # run never marks a day done without its events on disk.
+        pd.DataFrame(events).drop_duplicates("event_number") \
+            .to_csv(NRC_RAW_PATH, index=False, compression="gzip")
+        with open(NRC_DAYS_DONE_PATH, "a") as f:
+            f.writelines(d + "\n" for d in pending_days)
+        pending_days.clear()
+
+    n, pending = 0, []
+    with ThreadPoolExecutor(max_workers=workers) as pool:
         for fut in as_completed([pool.submit(work, d) for d in todo]):
             day, page = fut.result()
             if page:
                 events.extend(parse_nrc_page(page))
-            done_f.write(day.isoformat() + "\n")
-            done_f.flush()
+            pending.append(day.isoformat())
             n += 1
+            if n % 50 == 0:
+                checkpoint(pending)
             if n % 200 == 0:
                 logger.info(f"  {n}/{len(todo)} days, {len(events)} power-reactor events total")
-                # checkpoint
-                pd.DataFrame(events).drop_duplicates("event_number") \
-                    .to_csv(NRC_RAW_PATH, index=False, compression="gzip")
+    if events:
+        checkpoint(pending)
     df = pd.DataFrame(events).drop_duplicates("event_number")
     logger.info(f"NRC: {len(df)} unique power-reactor events")
     return df

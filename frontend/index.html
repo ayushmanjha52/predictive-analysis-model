@@ -11,16 +11,21 @@
 
 <header class="topbar">
   <div>
-    <p class="brand-eyebrow"><span class="dot"></span> LIVE &middot; DELAY LOG PIPELINE</p>
-    <h1 class="brand-title">FIELD DEVICE RELIABILITY <span class="slash">/</span> MILL + POWER FLEET</h1>
-    <p class="brand-sub" id="brandSub">Industry Mill<span class="sep">&middot;</span>benchmarked against every US power reactor and 35,000 power plants worldwide</p>
+    <p class="brand-eyebrow"><span class="dot"></span>Industry Mill &middot; Field-Device Reliability</p>
+    <h1 class="brand-title">Why field devices stop the mill, and <em>what to fix first.</em></h1>
+    <p class="brand-sub">Delay-log analytics and a cause classifier for the Industry Mill, benchmarked against every reported event at US power reactors and 35,000 power plants worldwide.</p>
+  </div>
+  <div class="brand-meta">
+    <span>Classifier backtest <b id="metaAccuracy">—</b></span>
+    <span id="metaModel">&nbsp;</span>
+    <a href="https://github.com/ayushmanjha52/predictive-analysis-model" target="_blank" rel="noopener">Source on GitHub &#8599;</a>
   </div>
 </header>
 
 <nav class="tabs" role="tablist">
-  <button class="tab-btn active" data-tab="tab-mill" role="tab">Industry Mill</button>
-  <button class="tab-btn" data-tab="tab-fleet" role="tab">Power Fleet Insights</button>
-  <button class="tab-btn" data-tab="tab-plants" role="tab">Global Power Plants</button>
+  <button class="tab-btn active" data-tab="tab-mill" role="tab"><span class="num">01</span>Industry Mill</button>
+  <button class="tab-btn" data-tab="tab-fleet" role="tab"><span class="num">02</span>Power Fleet</button>
+  <button class="tab-btn" data-tab="tab-plants" role="tab"><span class="num">03</span>Global Plants</button>
 </nav>
 
 <main class="page">
@@ -32,17 +37,17 @@
       <p class="kpi-value" id="kpiTotalMinutes">—</p>
       <p class="kpi-foot" id="kpiTotalMinutesFoot">&nbsp;</p>
     </div>
-    <div class="kpi-card c-gold">
+    <div class="kpi-card">
       <p class="kpi-label">Devices Monitored</p>
       <p class="kpi-value" id="kpiTaggedEvents">—</p>
       <p class="kpi-foot" id="kpiTaggedEventsFoot">&nbsp;</p>
     </div>
-    <div class="kpi-card c-blue">
+    <div class="kpi-card">
       <p class="kpi-label">Top Contributor (Volume)</p>
       <p class="kpi-value small" id="kpiTopVolume">—</p>
       <p class="kpi-foot" id="kpiTopVolumeFoot">&nbsp;</p>
     </div>
-    <div class="kpi-card c-teal">
+    <div class="kpi-card">
       <p class="kpi-label">Top Contributor (Severity)</p>
       <p class="kpi-value small" id="kpiTopSeverity">—</p>
       <p class="kpi-foot" id="kpiTopSeverityFoot">&nbsp;</p>
@@ -246,17 +251,17 @@
       <p class="kpi-value" id="fleetKpiEvents">—</p>
       <p class="kpi-foot" id="fleetKpiEventsFoot">&nbsp;</p>
     </div>
-    <div class="kpi-card c-gold">
+    <div class="kpi-card">
       <p class="kpi-label">Field-Device Failures</p>
       <p class="kpi-value" id="fleetKpiDevice">—</p>
       <p class="kpi-foot" id="fleetKpiDeviceFoot">&nbsp;</p>
     </div>
-    <div class="kpi-card c-blue">
+    <div class="kpi-card">
       <p class="kpi-label">Power Plants Covered</p>
       <p class="kpi-value" id="fleetKpiPlants">—</p>
       <p class="kpi-foot" id="fleetKpiPlantsFoot">&nbsp;</p>
     </div>
-    <div class="kpi-card c-teal">
+    <div class="kpi-card">
       <p class="kpi-label">Grid / Offsite-Power Events</p>
       <p class="kpi-value" id="fleetKpiGrid">—</p>
       <p class="kpi-foot" id="fleetKpiGridFoot">&nbsp;</p>
@@ -357,10 +362,10 @@
       </select>
     </div>
     <section class="kpi-grid">
-      <div class="kpi-card c-blue"><p class="kpi-label">Plants</p><p class="kpi-value" id="plantsKpiCount">—</p></div>
-      <div class="kpi-card c-gold"><p class="kpi-label">Capacity</p><p class="kpi-value" id="plantsKpiGw">—</p></div>
-      <div class="kpi-card c-teal"><p class="kpi-label">Largest Fuel</p><p class="kpi-value small" id="plantsKpiFuel">—</p></div>
-      <div class="kpi-card c-accent"><p class="kpi-label">Fuel Types</p><p class="kpi-value" id="plantsKpiFuels">—</p></div>
+      <div class="kpi-card c-accent"><p class="kpi-label">Plants</p><p class="kpi-value" id="plantsKpiCount">—</p></div>
+      <div class="kpi-card"><p class="kpi-label">Capacity</p><p class="kpi-value" id="plantsKpiGw">—</p></div>
+      <div class="kpi-card"><p class="kpi-label">Largest Fuel</p><p class="kpi-value small" id="plantsKpiFuel">—</p></div>
+      <div class="kpi-card"><p class="kpi-label">Fuel Types</p><p class="kpi-value" id="plantsKpiFuels">—</p></div>
     </section>
     <div id="fuelBars"></div>
   </section>
@@ -384,6 +389,11 @@
 </div>
 
 </main>
+
+<footer class="site-footer">
+  <span>Built by Ayushman Jha &middot; <a href="https://github.com/ayushmanjha52" target="_blank" rel="noopener">github.com/ayushmanjha52</a></span>
+  <span>Data: Industry Mill delay log &middot; US NRC event reports &middot; WRI Global Power Plant Database</span>
+</footer>
 
 <script src="config.js"></script>
 <script src="script.js"></script>

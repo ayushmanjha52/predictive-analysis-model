@@ -1,13 +1,37 @@
-// Dashboard logic: fetches from the FastAPI backend (app.py) and renders
-// the Industry Mill, Power Fleet and Global Power Plants tabs.
+// Dashboard logic: renders the Industry Mill, Power Fleet and Global Power
+// Plants tabs. Talks to the FastAPI backend (app.py), or -- in the static
+// GitHub Pages build (window.PDM_STATIC) -- reads pre-rendered JSON from
+// api/ and classifies delays in the browser with model.js.
 
 const state = { stats: null };
+const STATIC = Boolean(window.PDM_STATIC);
 
 function apiUrl(path) {
   return new URL(API_BASE_URL + path, window.location.origin);
 }
 
+// Must match slug() in src/build_site.py.
+function staticSlug(path, params) {
+  const name = path.replace(/^\/+|\/+$/g, "").replace(/\//g, "_") || "root";
+  const parts = Object.keys(params).sort()
+    .filter(k => params[k] !== "" && params[k] != null)
+    .map(k => `${k}-${params[k]}`);
+  return name + (parts.length ? "--" + parts.join("_") : "");
+}
+
+async function readJson(res) {
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || `Request failed (${res.status})`);
+  }
+  return res.json();
+}
+
 async function apiGet(path, params = {}) {
+  if (STATIC) {
+    if (path === "/shadow_stats") return localShadow.stats();
+    return readJson(await fetch(`api/${staticSlug(path, params)}.json`));
+  }
   const url = apiUrl(path);
   Object.entries(params).forEach(([k, v]) => { if (v !== "" && v != null) url.searchParams.set(k, v); });
   let res;
@@ -16,12 +40,76 @@ async function apiGet(path, params = {}) {
   } catch (networkErr) {
     throw new Error(`Cannot reach the API at ${url.origin} -- is the backend running? (uvicorn app:app --port 8000)`);
   }
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.detail || `Request failed (${res.status})`);
-  }
-  return res.json();
+  return readJson(res);
 }
+
+async function apiPost(path, body) {
+  if (STATIC) return localShadow.handle(path, body);
+  return readJson(await fetch(apiUrl(path), {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+  }));
+}
+
+// Static build: shadow-mode reviews are classified by model.js and kept
+// in this browser's localStorage, on top of the repo's baseline stats.
+const localShadow = {
+  key: "pdm-shadow-log",
+  classifier: null,
+  async model() {
+    if (!this.classifier) this.classifier = new DelayClassifier(await readJson(await fetch("model.json")));
+    return this.classifier;
+  },
+  load() {
+    try { return JSON.parse(localStorage.getItem(this.key)) || []; } catch (e) { return []; }
+  },
+  save(log) {
+    try { localStorage.setItem(this.key, JSON.stringify(log)); } catch (e) { /* storage unavailable */ }
+  },
+  async handle(path, body) {
+    const log = this.load();
+    if (path === "/shadow_predict") {
+      const r = (await this.model()).predict(body.reason_text, body.area);
+      const entry = { shadow_id: Math.random().toString(16).slice(2, 10), reason_text: body.reason_text,
+                      area: body.area, mins: body.mins ?? null, predicted_device: r.predicted_device,
+                      confidence: r.confidence, logged_at: new Date().toISOString() };
+      log.push(entry);
+      this.save(log);
+      return { shadow_id: entry.shadow_id, logged: true };
+    }
+    if (path === "/shadow_resolve") {
+      const entry = log.find(e => e.shadow_id === body.shadow_id);
+      if (!entry) throw new Error(`No shadow entry found for id '${body.shadow_id}'.`);
+      entry.actual_device = body.actual_device.toUpperCase();
+      entry.agreement = entry.predicted_device === entry.actual_device;
+      entry.resolved_at = new Date().toISOString();
+      this.save(log);
+      return { shadow_id: entry.shadow_id, predicted_device: entry.predicted_device,
+               actual_device: entry.actual_device, agreement: entry.agreement, resolved: true };
+    }
+    throw new Error(`Not available in the static site: ${path}`);
+  },
+  async stats() {
+    const base = await readJson(await fetch("api/shadow_stats.json"));
+    const log = this.load();
+    const resolved = log.filter(e => e.resolved_at);
+    const byDevice = new Map((base.by_device || []).map(d => [d.predicted_device,
+      { n: d.n, agree: Math.round(d.n * d.agreement_rate / 100) }]));
+    for (const e of resolved) {
+      const d = byDevice.get(e.predicted_device) || { n: 0, agree: 0 };
+      d.n += 1; d.agree += e.agreement ? 1 : 0;
+      byDevice.set(e.predicted_device, d);
+    }
+    const n = [...byDevice.values()].reduce((s, d) => s + d.n, 0);
+    const agree = [...byDevice.values()].reduce((s, d) => s + d.agree, 0);
+    return {
+      total_resolved: n,
+      total_pending: (base.total_pending || 0) + log.length - resolved.length,
+      overall_agreement_rate: n ? +(agree / n * 100).toFixed(1) : null,
+      by_device: [...byDevice].map(([device, d]) => ({
+        predicted_device: device, n: d.n, agreement_rate: +(d.agree / d.n * 100).toFixed(1) })),
+    };
+  },
+};
 
 function fmtMin(n) {
   if (n == null || isNaN(n)) return "—";
@@ -31,6 +119,14 @@ function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
+}
+
+async function loadModelMeta() {
+  const m = await apiGet("/model_info");
+  const pct = v => (v == null ? "—" : `${(v * 100).toFixed(1)}%`);
+  document.getElementById("metaAccuracy").textContent = pct(m.backtest_accuracy ?? m.holdout_accuracy);
+  document.getElementById("metaModel").textContent =
+    `${(m.winner_model || "").replace(/_/g, " ")} · ${m.backtest_n_test_events || m.n_samples} unseen events`;
 }
 
 async function loadStats() {
@@ -125,15 +221,7 @@ async function shadowLogDelay() {
   try {
     const payload = { reason_text: reasonText, area };
     if (minsVal !== "") payload.mins = parseFloat(minsVal);
-    const res = await fetch(apiUrl("/shadow_predict"), {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw new Error(body.detail || `Request failed (${res.status})`);
-    }
-    const result = await res.json();
+    const result = await apiPost("/shadow_predict", payload);
     shadowCurrentId = result.shadow_id;
 
     document.getElementById("shadowStep1").style.display = "none";
@@ -165,15 +253,8 @@ async function shadowResolveDelay() {
   btn.disabled = true;
   btn.innerHTML = `<span class="spinner"></span> Comparing…`;
   try {
-    const res = await fetch(apiUrl("/shadow_resolve"), {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ shadow_id: shadowCurrentId, actual_device: actualDevice, reviewer_note: note || null }),
-    });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw new Error(body.detail || `Request failed (${res.status})`);
-    }
-    const result = await res.json();
+    const result = await apiPost("/shadow_resolve",
+      { shadow_id: shadowCurrentId, actual_device: actualDevice, reviewer_note: note || null });
     renderShadowResult(result);
     await loadShadowStats();
   } catch (e) {
@@ -245,7 +326,9 @@ function renderParetoBars(d) {
 }
 
 function renderForecastBars(d) {
-  const rows = d.ranked_by_expected_delay || [];
+  // Only devices with enough history to rank (same set as the Pareto).
+  const reliable = new Set((state.stats?.pareto_by_device || []).map(r => r.device));
+  const rows = (d.ranked_by_expected_delay || []).filter(r => !reliable.size || reliable.has(r.device));
   const total = rows.reduce((sum, r) => sum + r.expected_minutes, 0);
   document.getElementById("forecastBars").innerHTML = rows.map(r => {
     const pct = total > 0 ? (r.expected_minutes / total * 100) : 0;
@@ -329,9 +412,9 @@ function renderHealthScore(d) {
 
   const rows = d.top_at_risk || [];
   tbody.innerHTML = rows.length ? rows.map(r => {
-    const scoreColor = r.health_score >= 75 ? "var(--accent)" : r.health_score >= 50 ? "#f0ad4e" : "var(--teal)";
+    const scoreColor = r.health_score >= 75 ? "var(--critical)" : r.health_score >= 50 ? "var(--gold)" : "var(--teal)";
     const warningBadge = r.low_sample_warning
-      ? ` <span title="Fewer than 5 total events -- treat this score cautiously" style="color:#f0ad4e;">&#9888;</span>`
+      ? ` <span title="Fewer than 5 total events -- treat this score cautiously" style="color:var(--gold);">&#9888;</span>`
       : "";
     const survivalCell = (d.survival_model_available && r.survival_model_14d_recurrence_pct != null)
       ? `${r.survival_model_14d_recurrence_pct}%`
@@ -398,6 +481,37 @@ function renderLowSampleTable(d) {
   `).join("") : `<tr><td colspan="5" class="text-dim">None.</td></tr>`;
 }
 
+// Shared Chart.js line chart: thin lines, monotone curves (no overshoot
+// below zero), recessive grid, hover tooltip.
+function lineChart(canvas, labels, series, yBeginAtZero = true) {
+  Chart.defaults.font.family = "'Geist', system-ui, sans-serif";
+  Chart.defaults.color = "#6f6c66";
+  return new Chart(canvas.getContext("2d"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: series.map(({ label, data, color }) => ({
+        label, data, borderColor: color, backgroundColor: color,
+        borderWidth: 2, cubicInterpolationMode: "monotone",
+        pointRadius: 0, pointHoverRadius: 4, pointHitRadius: 12,
+      })),
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { position: "bottom", labels: { color: "#a8a49c", boxWidth: 8, boxHeight: 8, usePointStyle: true, padding: 18, font: { size: 12 } } },
+        tooltip: { backgroundColor: "#17171a", borderColor: "#26262a", borderWidth: 1, titleColor: "#f2efe9",
+                   bodyColor: "#a8a49c", padding: 12, boxPadding: 4, usePointStyle: true },
+      },
+      scales: {
+        x: { ticks: { color: "#6f6c66" }, grid: { display: false }, border: { color: "#26262a" } },
+        y: { ticks: { color: "#6f6c66" }, grid: { color: "#1b1b1e" }, border: { display: false }, beginAtZero: yBeginAtZero },
+      },
+    },
+  });
+}
+
 let trendChartInstance = null;
 function renderTrendChart(forecastData) {
   const canvas = document.getElementById("trendChart");
@@ -413,34 +527,13 @@ function renderTrendChart(forecastData) {
   });
   const labels = sortMonthsChronologically([...monthSet]);
 
-  const datasets = topDevices.map(dev => {
-    const series = forecasts[dev]?.monthly_totals || [];
-    const byMonth = Object.fromEntries(series.map(s => [s.month, s.mins]));
-    return {
-      label: formatDevice(dev),
-      data: labels.map(m => byMonth[m] ?? 0),
-      borderColor: deviceColor(dev),
-      backgroundColor: deviceColor(dev) + "33",
-      tension: 0.35,
-      pointRadius: 3,
-      borderWidth: 2,
-    };
+  const series = topDevices.map(dev => {
+    const byMonth = Object.fromEntries((forecasts[dev]?.monthly_totals || []).map(s => [s.month, s.mins]));
+    return { label: formatDevice(dev), data: labels.map(m => byMonth[m] ?? 0), color: deviceColor(dev) };
   });
 
   if (trendChartInstance) trendChartInstance.destroy();
-  trendChartInstance = new Chart(canvas.getContext("2d"), {
-    type: "line",
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      interaction: { mode: "index", intersect: false },
-      plugins: { legend: { position: "bottom", labels: { color: "#8194A6", boxWidth: 10, font: { size: 11 } } } },
-      scales: {
-        x: { ticks: { color: "#5A6C7E" }, grid: { color: "#182230" } },
-        y: { ticks: { color: "#5A6C7E" }, grid: { color: "#182230" } },
-      },
-    },
-  });
+  trendChartInstance = lineChart(canvas, labels, series);
 }
 
 // "Nov-25" -> 202511, for chronological sorting of month labels.
@@ -544,6 +637,7 @@ function renderAlerts(stats, forecast, areaBreakdown, areaRisk, hotspots) {
 
 async function init() {
   setupTabs();
+  loadModelMeta().catch(() => {});
   document.getElementById("checkForecastBtn").addEventListener("click", checkDeviceForecast);
   document.getElementById("shadowLogBtn").addEventListener("click", shadowLogDelay);
   document.getElementById("shadowResolveBtn").addEventListener("click", shadowResolveDelay);
@@ -705,10 +799,10 @@ function renderLessons(d) {
 }
 
 function renderFleetRanking(d) {
-  const rows = (d.devices || []).filter(r => r.fleet_events > 0 || r.home_events > 0);
+  const rows = (d.devices || []).filter(r => r.fleet_events > 0 || r.home_events >= 5);
   document.getElementById("fleetRankBody").innerHTML = rows.map(r => `
     <tr>
-      <td><span class="device-chip"><span class="device-dot" style="background:${deviceColor(r.device)}"></span>${formatDevice(r.device)}</span>${r.low_sample && r.fleet_events ? ` <span title="Fewer than 5 fleet events -- treat rates as indicative only" style="color:#f0ad4e;">&#9888;</span>` : ""}</td>
+      <td><span class="device-chip"><span class="device-dot" style="background:${deviceColor(r.device)}"></span>${formatDevice(r.device)}</span>${r.low_sample && r.fleet_events ? ` <span title="Fewer than 5 fleet events -- treat rates as indicative only" style="color:var(--gold);">&#9888;</span>` : ""}</td>
       <td class="num">${fmtInt(r.fleet_events)}</td>
       <td class="num">${fmtInt(r.plants_affected)}</td>
       <td class="num">${fmtPct(r.trip_rate_pct)}</td>
@@ -724,28 +818,12 @@ function renderFleetTrend(d) {
   document.getElementById("fleetTrendNote").textContent = d.note || "";
   if (!canvas || typeof Chart === "undefined") return;
   // Fleet totals rather than per-device lines (too few per year to read).
-  const line = (label, data, color) => ({
-    label, data, borderColor: color, backgroundColor: color + "33", tension: 0.3, pointRadius: 2, borderWidth: 2,
-  });
-  const datasets = [
-    line("All reported events", d.total_events, "#4A90E2"),
-    line("Reactor / turbine trips", d.reactor_trips, "#F4623A"),
-    line("Grid / offsite-power events", d.grid_events, "#3ED6A0"),
-  ];
   if (fleetChart) fleetChart.destroy();
-  fleetChart = new Chart(canvas.getContext("2d"), {
-    type: "line",
-    data: { labels: d.years, datasets },
-    options: {
-      responsive: true,
-      interaction: { mode: "index", intersect: false },
-      plugins: { legend: { position: "bottom", labels: { color: "#8194A6", boxWidth: 10, font: { size: 11 } } } },
-      scales: {
-        x: { ticks: { color: "#5A6C7E" }, grid: { color: "#182230" } },
-        y: { ticks: { color: "#5A6C7E" }, grid: { color: "#182230" }, beginAtZero: true },
-      },
-    },
-  });
+  fleetChart = lineChart(canvas, d.years, [
+    { label: "All reported events", data: d.total_events, color: SERIES[0] },
+    { label: "Reactor / turbine trips", data: d.reactor_trips, color: SERIES[1] },
+    { label: "Grid / offsite-power events", data: d.grid_events, color: SERIES[2] },
+  ]);
 }
 
 function renderGrid(d) {
@@ -799,7 +877,7 @@ async function loadPlants(country) {
     document.getElementById("fuelBars").innerHTML = d.by_fuel.map(f => `
       <div class="bar-row">
         <span class="name">${escapeHtml(f.primary_fuel)}</span>
-        <div class="bar-track"><div class="bar-fill" style="width:${(f.capacity_gw / max * 100).toFixed(1)}%; background:var(--gold)"></div></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(f.capacity_gw / max * 100).toFixed(1)}%; background:var(--blue)"></div></div>
         <span class="val">${f.share_pct}%</span>
       </div>`).join("");
     document.getElementById("largestPlantsBody").innerHTML = d.largest_plants.map(p => `

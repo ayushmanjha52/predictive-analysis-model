@@ -174,8 +174,34 @@ def test_api_endpoints_return_valid_json():
     assert client.get("/config.js").status_code == 200
 
 
+def test_browser_model_matches_python(tmp_path):
+    """frontend/model.js (static site) must predict exactly like CausePredictor."""
+    import json
+    import shutil
+    import subprocess
+    if shutil.which("node") is None:
+        return
+    from build_site import export_model
+    predictor = CausePredictor()
+    df = load_master_events()
+    cases = [{"reason_text": t, "area": (None if pd.isna(a) else a), "plant_type": None}
+             for t, a in zip(df["reason_text"].fillna(""), df["area"])]
+    cases += [{"reason_text": "level transmitter failed low", "area": None, "plant_type": "NUCLEAR_POWER"},
+              {"reason_text": "", "area": "", "plant_type": None}]
+    (tmp_path / "model.json").write_text(json.dumps(export_model()))
+    (tmp_path / "cases.json").write_text(json.dumps(cases))
+    script = Path(__file__).parent / "web_model_check.js"
+    js = json.loads(subprocess.run(["node", str(script), str(tmp_path / "model.json"), str(tmp_path / "cases.json")],
+                                   capture_output=True, text=True, check=True).stdout)
+    for c, j in zip(cases, js):
+        p = predictor.predict(c["reason_text"], area=c["area"], plant_type=c["plant_type"])
+        assert j["predicted_device"] == p["predicted_device"], (c, j, p["predicted_device"])
+        assert abs(j["confidence"] - p["confidence"]) < 1e-3, (c, j, p["confidence"])
+        assert j["decision_basis"] == p["decision_basis"], (c, j)
+
+
 def test_runtime_requirements_cover_deployed_model():
-    """Render installs requirements.txt only; the pickled model's library must be in it."""
+    """A server installs requirements.txt only; the pickled model's library must be in it."""
     import joblib
     model = joblib.load(config.MODEL_PATH)
     package = {"sklearn": "scikit-learn"}.get(type(model).__module__.split(".")[0],

@@ -15,3 +15,6 @@ catboost_info/
 data/external/nrc_events_raw.csv.gz
 data/external/nrc_days_done.txt
 models/archive/
+
+# Static build output (published to the gh-pages branch)
+site/

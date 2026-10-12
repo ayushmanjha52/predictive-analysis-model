@@ -7,7 +7,7 @@ PROJECT_ROOT = Path(os.environ.get("PDM_ROOT", Path(__file__).resolve().parent.p
 
 REPO_DATA_DIR = PROJECT_ROOT / "data"
 # PDM_DATA_DIR: optional persistent location for writable data (event
-# log, shadow log), e.g. a Render disk. It is seeded from the repo's
+# log, shadow log), e.g. a mounted disk on a server. It is seeded from the repo's
 # data/ folder on first start.
 DATA_DIR = Path(os.environ.get("PDM_DATA_DIR", REPO_DATA_DIR))
 EXTERNAL_DIR = DATA_DIR / "external"

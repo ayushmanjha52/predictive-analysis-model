@@ -1,5 +1,5 @@
-# Runtime dependencies (what Render installs). Training/test extras are
-# in requirements-dev.txt.
+# Runtime dependencies for the API server (app.py). Training, tests and
+# the static-site build use requirements-dev.txt.
 #
 # Versions are pinned to those the committed models/*.pkl were trained
 # with; change them only together with a retrain. If a retrain selects
